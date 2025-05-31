@@ -1,0 +1,25 @@
+type: agentRequested
+title: Translation Variants Source and Exclusions
+description: |
+  Guidelines for how translation_variants are fetched and filtered in the Contextual Insights program.
+globs:
+  - "src/dspy_programs/contextual_insights_program.py"
+alwaysApply: false
+
+---
+
+# Translation Variants Pattern
+
+- Use the `get_bible_db_translations(reference)` function to query the Postgres `bible.verses` table by `book_name`, `chapter_num`, and `verse_num`.
+- Exclude licensed translations by filtering out `translation_source = 'ESV'` in the SQL `WHERE` clause.
+- Map each row into an object with keys:
+  - `translation`: the translation_source identifier (e.g., KJV, ASV, TAGNT, TAHOT)
+  - `text`: the verse_text value
+  - `notes`: a string using the translation identifier (e.g., "KJV translation").
+- Append the resulting `translation_variants` list to the insights JSON after querying LM Studio.
+
+Example:
+```python
+insights = query_lm_studio(prompt)
+insights['translation_variants'] = get_bible_db_translations('John 3:16')
+```

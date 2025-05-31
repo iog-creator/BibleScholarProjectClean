@@ -1,0 +1,27 @@
+---
+type: restored
+title: rule_template
+description: This file was automatically restored or completed.
+globs: []
+alwaysApply: true
+---
+
+# Rule Title
+
+Rule content goes here...
+
+
+---
+# For always-on rules:
+type: always
+description: This rule must always be included (e.g., for documentation usage and updates.)
+globs:
+  - "src/**/*.py"
+  - "scripts/*.py"
+  - "tests/**/*.py"
+alwaysApply: true
+
+---
+# Rule Title
+
+Rule content goes here...

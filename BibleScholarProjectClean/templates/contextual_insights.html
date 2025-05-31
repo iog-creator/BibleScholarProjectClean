@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Contextual Insights{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:1000;">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <h1>Contextual Insights</h1>
+    <p class="lead">Explore rich insights for Bible verses, topics, or text snippets.</p>
+    
+    <!-- Search Form -->
+    <form method="POST" action="/search" class="mb-4">
+        <div class="form-group">
+            <label for="search_query">Search</label>
+            <input type="text" class="form-control" id="search_query" name="query" placeholder="e.g., Blessed are the poor in spirit">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    
+    <!-- Insights Form -->
+    <form method="POST" class="mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="focus_type" class="form-label">Focus Type</label>
+                <select class="form-select" id="focus_type" name="focus_type" required>
+                    <option value="verse" {% if input_data and input_data.type == 'verse' %}selected{% endif %}>Verse</option>
+                    <option value="topic" {% if input_data and input_data.type == 'topic' %}selected{% endif %}>Topic</option>
+                    <option value="text_snippet" {% if input_data and input_data.type == 'text_snippet' %}selected{% endif %}>Text Snippet</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="reference" class="form-label">Verse Reference</label>
+                <input type="text" class="form-control" id="reference" name="reference" placeholder="e.g. John 3:16" value="{% if input_data and input_data.reference %}{{ input_data.reference }}{% endif %}">
+            </div>
+            <div class="col-md-3">
+                <label for="topic" class="form-label">Topic</label>
+                <input type="text" class="form-control" id="topic" name="topic" placeholder="e.g. Sermon on the Mount" value="{% if input_data and input_data.query_text %}{{ input_data.query_text }}{% endif %}">
+            </div>
+            <div class="col-md-3">
+                <label for="snippet" class="form-label">Text Snippet</label>
+                <input type="text" class="form-control" id="snippet" name="snippet" placeholder="e.g. Blessed are the poor..." value="{% if input_data and input_data.text %}{{ input_data.text }}{% endif %}">
+            </div>
+            <div class="col-md-12 mt-3">
+                <button type="submit" class="btn btn-primary">Get Insights</button>
+            </div>
+        </div>
+    </form>
+    
+    {% if error %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>AI insights unavailable.</strong> Showing available translation variants and lexical data.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    {% if insights and insights.insights %}
+    <div class="card mb-3">
+        <div class="card-header"><strong>Summary</strong></div>
+        <div class="card-body">{{ insights.insights.summary }}</div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Cross References</strong></div>
+        <div class="card-body">
+            <ul>
+                {% for ref in insights.insights.cross_references %}
+                <li>
+                    <a href="/verse/{{ ref.reference.replace(' ', '/') }}">{{ ref.reference }}</a> ({{ ref.translation }}): {{ ref.text }}
+                    <br><small>{{ ref.reason }} (Similarity: {{ (ref.similarity * 100)|round(2) }}%)</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Old Testament Connections</strong></div>
+        <div class="card-body">
+            <ul>
+                {% for conn in insights.insights.ot_connections %}
+                <li>
+                    <a href="/verse/{{ conn.reference.replace(' ', '/') }}">{{ conn.reference }}</a>: {{ conn.text }}
+                    <br><small>{{ conn.connection_reason }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Translation Variants</strong></div>
+        <div class="card-body">
+            <ul>
+                {% for variant in insights.insights.translation_variants %}
+                <li>{{ variant.translation }}: {{ variant.text }}<br><small>{{ variant.connection_reason }}</small></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Lexical Data</strong></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Word</th>
+                            <th>Strong's ID</th>
+                            <th>Grammar</th>
+                            <th>Transliteration</th>
+                            <th>Lemma</th>
+                            <th>Definition</th>
+                            <th>Connection Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in insights.insights.lexical_data %}
+                        <tr>
+                            <td>{{ entry.word }}</td>
+                            <td>{{ entry.strongs_id }}</td>
+                            <td>{{ entry.grammar }}</td>
+                            <td>{{ entry.transliteration }}</td>
+                            <td>{{ entry.lemma }}</td>
+                            <td>{{ entry.definition }}</td>
+                            <td>{{ entry.connection_reason }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Theological Terms</strong></div>
+        <div class="card-body">
+            <ul>
+                {% for term, definition in insights.insights.theological_terms.items() %}
+                <li><b>{{ term }}</b>: {{ definition }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Historical Context</strong></div>
+        <div class="card-body">{{ insights.insights.historical_context }}</div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Original Language Notes</strong></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Word</th>
+                            <th>Strong's ID</th>
+                            <th>Grammar</th>
+                            <th>Transliteration</th>
+                            <th>Meaning</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in insights.insights.original_language_notes %}
+                        <tr>
+                            <td>{{ note.word }}</td>
+                            <td>{{ note.strongs_id }}</td>
+                            <td>{{ note.grammar }}</td>
+                            <td>{{ note.transliteration }}</td>
+                            <td>{{ note.meaning }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header"><strong>Related Entities</strong></div>
+        <div class="card-body">
+            <h5>People</h5>
+            <ul>
+                {% for person in insights.insights.related_entities.people %}
+                <li><b>{{ person.name }}</b>: {{ person.description }}<br><small>{{ person.connection_reason }}</small></li>
+                {% endfor %}
+            </ul>
+            <h5>Places</h5>
+            <ul>
+                {% for place in insights.insights.related_entities.places %}
+                <li><b>{{ place.name }}</b>: {{ place.description }}<br><small>{{ place.connection_reason }}</small></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+    
+    <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            const btn = document.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerText = 'Loading...';
+            document.getElementById('loading-overlay').style.display = 'block';
+        });
+        document.getElementById('focus_type').addEventListener('change', function() {
+            var focusType = this.value;
+            document.getElementById('reference').parentElement.style.display = focusType === 'verse' ? 'block' : 'none';
+            document.getElementById('topic').parentElement.style.display = focusType === 'topic' ? 'block' : 'none';
+            document.getElementById('snippet').parentElement.style.display = focusType === 'text_snippet' ? 'block' : 'none';
+        });
+    </script>
+</div>
+{% endblock %} 

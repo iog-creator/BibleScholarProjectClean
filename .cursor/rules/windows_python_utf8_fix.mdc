@@ -1,0 +1,39 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Windows Python UTF-8 Console Output Fix
+
+## Problem
+
+When running Python scripts that print Unicode characters (e.g., Hebrew, Greek) to the console on Windows, you might encounter `UnicodeEncodeError: 'charmap' codec can't encode character...`. This occurs because the default Windows console encoding (often `cp1252`) may not support all Unicode characters.
+
+## Solution: `PYTHONUTF8` Environment Variable
+
+The most robust way to address this for the project is to ensure Python uses UTF-8 for its default standard input/output encoding. This can be achieved by setting the `PYTHONUTF8` environment variable to `1`.
+
+### How it was implemented in this project:
+
+1.  **Environment Files**: The setting `PYTHONUTF8=1` has been added to the project's environment files:
+    *   `.env`
+    *   `.env.example`
+    *   `.env.dspy`
+
+    This ensures that when these files are sourced, Python scripts run within that environment (e.g., via a virtual environment that loads `.env`) will adopt this UTF-8 behavior for console I/O.
+
+2.  **Manual Execution (if needed)**: If running a script outside an environment that automatically loads these `.env` files, you can set it temporarily for that command:
+    *   **PowerShell**: `$env:PYTHONUTF8='1'; python your_script.py`
+    *   **CMD**: `set PYTHONUTF8=1 && python your_script.py`
+
+## Batch Script Usage
+
+Batch scripts that invoke Python (e.g., `start_mcp_server.bat`, `start_servers.bat`) must include the following at the top to enforce UTF-8 console encoding:
+
+```bat
+set PYTHONUTF8=1
+```
+
+## Why this is important
+
+Consistent UTF-8 handling prevents errors and ensures that textual data, especially multilingual Bible text, is displayed and logged correctly during development and execution. While individual script logging handlers were configured for UTF-8, this global Python setting addresses the fundamental interaction with the Windows console more effectively.

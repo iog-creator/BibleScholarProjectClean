@@ -1,0 +1,27 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Windows Batch Path Consistency
+
+All batch scripts must prepend the following to %PATH% at runtime:
+
+```
+set "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;%PATH%"
+```
+
+This ensures commands like `netstat`, `findstr`, `timeout`, and `powershell` are always available, regardless of the shell or environment. This pattern prevents failures when running scripts from Cursor, Git Bash, or other non-standard shells.
+
+## Example
+
+```bat
+@echo off
+REM Ensure Windows system commands available
+set "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;%PATH%"
+REM ...rest of script...
+```
+
+## Maintenance
+- Apply this pattern to all new and existing batch scripts in the project.
+- Reference this rule in script comments and documentation as needed.

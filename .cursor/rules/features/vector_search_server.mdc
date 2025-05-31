@@ -1,0 +1,19 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Vector Search Server Enforcement Rule
+
+- The vector search server **must** use `vector_search_web.py` as the main entry point in BibleScholarProjectv2, not `vector_search_demo.py`.
+- `vector_search_web.py` **must**:
+  - Register the `vector_search_api` blueprint from `src/api/vector_search_api.py`.
+  - Register any other required blueprints (e.g., Bible QA API) as in the working parent system.
+  - Provide a `/health` endpoint for health checks.
+  - Use robust error handling and logging as in the parent system.
+  - Load environment variables from the local `.env` file for all configuration (database, API, LM Studio, etc.).
+- The `start_servers.bat` script **must** start `vector_search_web.py` (on the correct port, e.g., 5050 or 5001) using the same Python environment as the other servers.
+- All dependencies and required modules (e.g., `src/api/vector_search_api.py`) **must** be present and imported as in the parent system.
+- Any changes to the vector search server setup **must** be reflected in this rule and reviewed for consistency with the parent system.
+
+> This rule ensures the vector search server is robust, maintainable, and consistent with the working system, preventing regressions and deployment issues.

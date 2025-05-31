@@ -1,0 +1,198 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+type: always
+title: Documentation System
+description: Guidelines for the BibleScholarProject documentation system, structure, and formats
+globs:
+  - "docs/**/*.md"
+  - "README*.md"
+alwaysApply: false
+---
+
+# Documentation System Guidelines
+
+## Documentation Structure
+
+The BibleScholarProject uses a hierarchical documentation system:
+
+1. **Root README Files**:
+   - `README.md`: Main project overview
+   - `README_DSPY.md`: DSPy integration overview
+   - `README_BIBLE_QA.md`: Bible QA system overview
+   - `README_VECTOR_SEARCH.md`: Vector search capabilities
+   - Additional specialized README files for specific features
+
+2. **Documentation Directory (`docs/`)**:
+   - `docs/README.md`: Documentation index
+   - `docs/ENVIRONMENT_CONFIGURATION.md`: Environment setup guide
+   - `docs/features/`: Feature-specific documentation
+   - `docs/guides/`: How-to guides for common tasks
+   - `docs/reference/`: Technical reference documentation
+   - `docs/rules/`: Development rules and guidelines
+
+3. **Integration with Cursor Rules**:
+   - `.cursor/rules/`: IDE-specific development rules
+   - Rules can reference documentation using relative paths
+
+## Documentation Formats
+
+### Markdown Format
+
+All documentation uses standard Markdown with these conventions:
+
+1. **Headers**:
+   - Use ATX-style headers (`#` for h1, `##` for h2, etc.)
+   - Main document title as h1 (`# Title`)
+   - Section headers as h2 (`## Section`)
+   - Subsections as h3/h4 (`### Subsection`)
+
+2. **Code Blocks**:
+   - Use fenced code blocks with language specified
+   ```python
+   def example_function():
+       return "This is an example"
+   ```
+
+3. **Lists**:
+   - Use `-` for unordered lists
+   - Use `1.` for ordered lists
+   - Use 3-space indentation for nested lists
+
+4. **Links**:
+   - Use relative links to other documentation files
+   - Format: `[Link Text](relative/path/to/doc.md)`
+
+5. **Tables**:
+   - Use standard Markdown tables
+   - Include a header row and separator
+
+### Metadata Headers
+
+Feature documentation should include YAML frontmatter:
+
+```markdown
+---
+title: Feature Name
+description: Brief description of the feature
+last_updated: YYYY-MM-DD
+related_docs:
+  - relative/path/to/related/doc1.md
+  - relative/path/to/related/doc2.md
+---
+
+# Feature Name
+
+Documentation content...
+```
+
+## Documentation Types
+
+1. **Overview Documents**:
+   - Provide high-level explanation of features/systems
+   - Located at root level (`README*.md`)
+   - Link to detailed documentation
+
+2. **Feature Documentation**:
+   - Detailed explanation of specific features
+   - Located in `docs/features/`
+   - Include code examples and configuration options
+
+3. **Reference Documentation**:
+   - Technical details, API references, schemas
+   - Located in `docs/reference/`
+   - Focus on complete and accurate technical details
+
+4. **How-To Guides**:
+   - Step-by-step instructions for common tasks
+   - Located in `docs/guides/`
+   - Practical examples with complete code samples
+
+5. **Environment Configuration**:
+   - Settings and environment setup guides
+   - Example configuration files
+   - Security best practices
+
+## Documentation Standards
+
+1. **Completeness**:
+   - Cover all parameters, options, and edge cases
+   - Include examples for common use cases
+   - Document both success and error scenarios
+
+2. **Accuracy**:
+   - Keep documentation in sync with code changes
+   - Include version information when applicable
+   - Verify examples work as documented
+
+3. **Clarity**:
+   - Use simple, direct language
+   - Define technical terms when first used
+   - Use consistent terminology throughout
+
+4. **Cross-References**:
+   - Link related documentation
+   - Reference source code where helpful
+   - Avoid duplicate content - link instead
+
+## Updating Documentation
+
+When making significant changes:
+
+1. Update all affected documentation files
+2. Add new files for major features
+3. Update the documentation index in `docs/README.md`
+4. Consider updating cursor rules if appropriate
+
+### Version Notes
+
+For changes across versions:
+
+- Add a "Changes in version X.Y" section for major updates
+- Use tables to show before/after examples
+- Highlight breaking changes prominently
+
+## Environment Configuration Documentation
+
+Environment configuration documentation should:
+
+1. Include example files with placeholders, never real credentials
+2. Explain all configuration options with their purpose
+3. Document security best practices
+4. Provide troubleshooting guidance
+
+## API Documentation
+
+API documentation should include:
+
+1. Endpoint URL and HTTP method
+2. Request parameters and body format
+3. Response structure and status codes
+4. Example requests and responses
+5. Error handling information
+
+## Database Documentation
+
+Database documentation should include:
+
+1. Schema definitions
+2. Relationships between tables
+3. Indexing information
+4. Query patterns and examples
+5. Migration procedures when applicable
+
+## Documentation Review
+
+Before committing documentation changes:
+
+1. Verify all links work correctly
+2. Check code examples for accuracy
+3. Ensure formatting is consistent
+4. Review for completeness and clarity
+
+## Additional Resources
+
+- [GitHub Markdown Guide](https://guides.github.com/features/mastering-markdown/)
+- [Documentation Best Practices](https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/)

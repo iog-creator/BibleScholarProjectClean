@@ -1,0 +1,9 @@
+---
+description: Guidelines for integrating all Bible database resources with pgvector semantic search capabilities
+globs: 
+alwaysApply: false
+---
+## Embedding Inspection in Python
+- Embeddings retrieved from the database may be a list, tuple, NumPy array, or string.
+- Use `.tolist()` for NumPy arrays, or `ast.literal_eval` for strings.
+- See [docs/known_issues.md](mdc:../../docs/known_issues.md) for robust inspection logic and troubleshooting.

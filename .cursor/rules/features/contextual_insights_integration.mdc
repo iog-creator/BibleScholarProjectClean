@@ -1,0 +1,29 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Contextual Insights Integration
+
+**Purpose**: Ensures `contextual_insights_program.py` and `contextual_insights_api.py` use direct LM Studio API calls to generate JSON insights (`summary`, `theological_terms`, `cross_references`, `historical_context`, `original_language_notes`, `related_entities`) for Bible verses, using primary (`bible_db`) and secondary (pre-1990 commentaries) sources. Excludes tertiary sources (post-1990 commentaries, community notes).
+
+**Guidelines**:
+- Use `query_lm_studio` from `contextual_insights_program.py` for insights.
+- Ensure `theological_terms` is a dict in the JSON schema.
+- Avoid DSPy or `dspy_json_patch.py`.
+- Test with John 3:16, validating against `theological_terms.md` and `summarization_dataset.jsonl`.
+- Run API on port 5002.
+
+**Example Prompt** (in `contextual_insights_program.py`):
+```
+"You are a Bible study assistant. Respond with a valid JSON object containing: "
+"'summary', 'theological_terms' (dict), 'cross_references', 'historical_context', "
+"'original_language_notes', 'related_entities'. Ensure strict JSON compliance."
+```
+
+applies_to:
+  - src/dspy_programs/contextual_insights_program.py
+  - src/api/contextual_insights_api.py
+  - docs/features/contextual_insights.md
+  - docs/reference/API_REFERENCE.md
+  - docs/features/GrokInstructionsDsPY.md

@@ -1,0 +1,11 @@
+---
+type: always
+title: Model Validation Guidelines
+description: Guidelines for ML model validation and evaluation
+globs:
+- '**/model/**/*.py'
+- '**/dspy/**/*.py'
+alwaysApply: false
+---
+
+# Model Validation Guidelines

@@ -1,0 +1,19 @@
+---
+description: Expected count validations for TVTMS processing
+globs: 
+  - "**/tvtms/**/*.py"
+  - "**/scripts/*tvtms*.py"
+type: always
+title: TVTMS Expected Count Validation
+description: Guidelines for validating TVTMS mapping counts in the BibleScholarProject
+globs:
+  - "src/etl/tvtms_*.py"
+  - "scripts/check_tvtms_counts.py"
+alwaysApply: false
+---
+
+# TVTMS Expected Count Validation
+
+This rule provides guidelines for validating TVTMS mapping counts.
+
+This rule provides guidelines for validating TVTMS mapping counts.

@@ -1,0 +1,123 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+type: always
+title: LM Studio + DSPy Integration
+description: Standards for integrating DSPy with LM Studio's OpenAI-compatible API
+globs:
+  - "src/dspy_programs/**/*.py"
+  - "scripts/data/**/*.py"
+  - "dspy_*.py"
+alwaysApply: false
+---
+
+# LM Studio + DSPy Integration
+
+## JSON Schema Requirements
+
+When integrating DSPy with LM Studio's OpenAI-compatible API, use the specific double-nested schema structure:
+
+```python
+response_format = {
+    "type": "json_schema",
+    "json_schema": {
+        "schema": {
+            "type": "object",
+            "properties": {
+                "field_name": {
+                    "type": "string",
+                    "description": "Description of the field"
+                }
+            },
+            "required": ["field_name"]
+        }
+    }
+}
+```
+
+Apply the project's `dspy_json_patch.py` patch to handle this automatically:
+
+```python
+# At the beginning of your script
+from dspy_json_patch import apply_all_patches
+apply_all_patches()
+```
+
+## Prompt Engineering Best Practices
+
+For reliable structured JSON output from LM Studio models:
+
+1. **Include explicit instructions** for JSON format in prompts:
+   ```
+   Respond ONLY with a JSON object in this format: {"field_name": "..."}
+   Do not include any text before or after the JSON object.
+   ```
+
+2. **Provide multiple few-shot examples** with different input types
+   ```
+   Input: Example input 1
+   Output: {"field_name": "Example output 1"}
+   
+   Input: Example input 2
+   Output: {"field_name": "Example output 2"}
+   ```
+
+3. **Use lower temperature settings** (0.2-0.3) for consistent structured outputs
+
+## DSPy Module Setup
+
+Always use the following pattern for DSPy modules with LM Studio:
+
+```python
+# 1. Define your signature with clear output fields
+class MySignature(dspy.Signature):
+    input_field = dspy.InputField(desc="Description of input")
+    output_field = dspy.OutputField(desc="Description of expected output")
+
+# 2. Configure DSPy with LM Studio
+lm_studio_lm = dspy.LM(
+    "openai/model_name",  # LM Studio model name
+    api_base="http://localhost:1234/v1",
+    api_key="sk-dummykeyforlocal",
+    temperature=0.3
+)
+dspy.settings.configure(lm=lm_studio_lm)
+
+# 3. Apply the JSON schema patch
+from dspy_json_patch import apply_all_patches
+apply_all_patches()
+
+# 4. Create and use your module
+my_module = dspy.Predict(MySignature)
+result = my_module(input_field="example input")
+```
+
+## Training and Optimization
+
+For best results when optimizing DSPy modules with LM Studio:
+
+1. **Prepare diverse training examples** covering all input and output patterns
+2. **Use the BootstrapFewShot optimizer** for reliable structured outputs:
+   ```python
+   from dspy.teleprompt import BootstrapFewShot
+   bootstrapper = BootstrapFewShot(metric="exact_match")
+   compiled_module = bootstrapper.compile(my_module, trainset=examples)
+   ```
+3. **Save optimized modules** for reuse:
+   ```python
+   dspy.save(compiled_module, "models/dspy/my_optimized_module.dspy")
+   ```
+
+## Troubleshooting
+
+If you encounter issues with structured JSON output:
+
+1. Test with `scripts/data/direct_lmstudio_json_test.py` to verify direct API behavior
+2. Compare DSPy vs. direct API calls with `scripts/data/run_direct_test_with_optimized_module.py`
+3. Check LM Studio logs for the exact request/response format
+
+## Further Resources
+
+For complete documentation, see [LM Studio + DSPy Integration](docs/features/LM_STUDIO_DSPY_INTEGRATION.md)

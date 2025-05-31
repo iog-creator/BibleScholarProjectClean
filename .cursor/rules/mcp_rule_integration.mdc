@@ -1,0 +1,38 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# MCP Tool Integration Rule Mapping
+
+type: always
+
+description: Maps MCP server tools to Cursor rules for automated enforcement and documentation.
+
+globs:
+  - "scripts/mcp_server.py"
+  - "scripts/manage_servers.py"
+  - "src/etl/**/*.py"
+  - "src/utils/**/*.py"
+  - "src/api/**/*.py"
+
+---
+
+## MCP Tool to Cursor Rule Mapping
+
+| MCP Tool                  | Enforced Cursor Rule(s)                                 |
+|--------------------------|--------------------------------------------------------|
+| enforce_etl_guidelines    | ETL Process Guidelines (`etl_rules.mdc`)               |
+| check_pandas_nulls        | Pandas Null Handling Guidelines (`pandas_null_handling.mdc`) |
+| enforce_pandas_types      | Pandas DataFrame Type Enforcement (`pandas_dataframe_type_enforcement.mdc`) |
+| validate_tvtms_counts     | TVTMS Expected Count Validation (`tvtms_expected_count.mdc`) |
+| check_tvtms_format        | TVTMS Text File Format Guidelines (`tvtms_txt_only.mdc`) |
+| log_action                | Logging and Error Handling (`logging_and_error_handling.mdc`) |
+| check_ports, normalize_reference | Server Management, Data Normalization (see docs) |
+| validate_json_schema      | DSPy/JSON Schema Integration (see docs)                |
+| suggest_incremental_change | Rule Creation Guide (`rule_creation_guide.mdc`)                                 |
+
+## Enforcement
+- All MCP tools must reference the relevant Cursor rule in their docstring or help output.
+- Documentation and onboarding must point to this mapping for clarity.
+- All new rules or tools should be added to this mapping for discoverability.

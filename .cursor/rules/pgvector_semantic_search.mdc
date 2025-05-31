@@ -1,0 +1,178 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+type: restored
+title: pgvector_semantic_search
+description: This file was automatically restored or completed.
+globs: []
+type: restored
+title: pgvector_semantic_search
+description: This file was automatically restored or completed.
+globs: []
+type: restored
+title: pgvector_semantic_search
+description: This file was automatically restored or completed.
+globs: []
+# pgVector Semantic Search Implementation
+
+# Note (2025-05): All references to `bible_db_new` have been migrated to `bible_db_source`.
+
+# Update 2025-05: All semantic search and contextual insights API development must use the unified Flask app on port 5000. If you get HTML, you are hitting the web server (port 5001), not the API server.
+
+# Update 2025-05: All semantic search and QA development must use the new `bible_db_source` database and embedding column as described in `bible_db_source/README_ETL.md`. Do not use legacy tables or data.
+
+This guide outlines the implementation of semantic search capabilities in the BibleScholarProject using PostgreSQL's pgvector extension.
+
+## Core Components
+
+1. **Database Structure**
+   - The extension `vector` must be enabled in PostgreSQL
+   - Embeddings are stored in `bible.verse_embeddings` table with 768-dimensional vectors
+   - Includes columns: `verse_id`, `book_name`, `chapter_num`, `verse_num`, `translation_source`, `embedding`
+   - Uses the IVFFlat index type for efficient similarity search
+
+2. **Embedding Generation** (`src/utils/generate_verse_embeddings.py`)
+   - Uses LM Studio API with `text-embedding-nomic-embed-text-v1.5@q8_0` model
+   - Processes verses in batches of 50 for optimal GPU utilization
+   - Stores embeddings in the database with proper vector formatting
+   - Creates appropriate index on the verse_embeddings table
+
+3. **API Endpoints** (`src/api/vector_search_api.py`)
+   - `/api/vector-search`: Search for verses semantically related to a query
+   - `/api/similar-verses`: Find verses similar to a specified verse
+   - `/api/compare-translations`: Compare translations using vector similarity
+
+4. **Demo Application** (`src/utils/vector_search_demo.py`)
+   - Simple Flask application running on port 5050
+   - Provides web interface for comparing semantic vs. keyword search
+   - Includes API endpoints for both search types
+
+## Testing and Usage
+
+### Python Scripts
+
+Use the standalone test scripts to verify vector search functionality:
+```python
+python -m src.utils.test_vector_search
+python test_pgvector_search.py  # Custom test script
+```
+
+### Web Demo Application
+
+Run the standalone demo application:
+```python
+python -m src.utils.vector_search_demo
+```
+
+Access the web interface at http://127.0.0.1:5050
+
+### API Testing with PowerShell
+
+When testing with PowerShell, use these approaches:
+
+```powershell
+# Test API endpoints with Invoke-WebRequest (preferred)
+$response = Invoke-WebRequest -Uri 'http://127.0.0.1:5050/search/vector?q=God created the heavens and the earth&translation=KJV&limit=3' -UseBasicParsing
+$response.Content
+
+# Test with headers for JSON response
+$headers = @{ "Accept" = "application/json" }
+Invoke-WebRequest -Uri 'http://127.0.0.1:5050/search/vector?q=query&translation=KJV' -Headers $headers -UseBasicParsing
+```
+
+### LM Studio API Testing
+
+Ensure LM Studio is running with the correct embedding model:
+
+```powershell
+# Test LM Studio API using PowerShell
+$headers = @{ "Content-Type" = "application/json" }
+$body = @{ 
+    model = "text-embedding-nomic-embed-text-v1.5@q8_0"
+    input = "Some text to embed" 
+} | ConvertTo-Json
+Invoke-WebRequest -Uri 'http://127.0.0.1:1234/v1/embeddings' -Method Post -Headers $headers -Body $body -UseBasicParsing
+```
+
+## Implementation Details
+
+1. **Vector Format for PostgreSQL**
+   - Use square brackets format for vector arrays
+   - Properly cast vectors to PostgreSQL vector type with `::vector`
+   - Example: `embedding_array = "[0.1, 0.2, ...]"` then use `%s::vector` in SQL
+
+2. **Search Algorithms**
+   - Using cosine similarity for semantic search with `<=>` operator
+   - Optimizing with proper indexing for faster search
+
+3. **Performance**
+   - Batch processing with 50 verses per batch
+   - Using GPU acceleration via LM Studio
+   - Created IVFFlat index with 100 lists for optimal search performance
+
+## Troubleshooting
+
+1. **LM Studio Connection Issues**
+   - Ensure LM Studio is running at http://127.0.0.1:1234
+   - Verify the `text-embedding-nomic-embed-text-v1.5@q8_0` model is loaded
+   - Check LM Studio API errors with direct API calls
+
+2. **Search Query Issues**
+   - Verify the correct book names (e.g., "Psalms" not "Psalm")
+   - Check database connectivity and table existence
+   - Confirm embedding vectors are properly formatted
+   
+3. **PowerShell Output Issues**
+   - Use `-UseBasicParsing` flag with Invoke-WebRequest
+   - Use ConvertTo-Json for formatting JSON responses
+   - Pipe to Select-Object -ExpandProperty Content for cleaner output
+
+## Post-Insert Validation
+
+After generating and inserting embeddings, always validate the following directly in the database:
+
+1. **Row count:**
+   ```sql
+   SELECT COUNT(*) FROM bible.verse_embeddings;
+   ```
+2. **Embedding type and dimension:**
+   ```sql
+   SELECT verse_id, pg_typeof(embedding), array_length(embedding, 1) FROM bible.verse_embeddings LIMIT 5;
+   ```
+   - Type should be `vector`, dimension should be 768.
+3. **Check for NULLs:**
+   ```sql
+   SELECT COUNT(*) FROM bible.verse_embeddings WHERE embedding IS NULL;
+   ```
+   - Should be 0.
+4. **Check for stringified embeddings:**
+   - Embeddings must not be stored as strings.
+
+**Do NOT rely solely on logs or script output for validation. Only direct SQL queries provide reliable confirmation.**
+
+## Current Status (May 2025: BGE-M3 Migration)
+
+- **Embedding Run**: In progress using LM Studio API
+    - `--batch_size 4096` (API batch size for LM Studio)
+    - `--db_insert_batch_size 2048` (database insert batch size)
+    - **Context window**: 512 tokens
+    - **Embeddings**: 1024-dimensional vectors stored in `bible.verse_embeddings`
+- **Validation**: Initial batch of 8192 embeddings (ASV translation) validated as correct (`vector` type, 1024 dimensions, no duplicates) via `test_vector_search.py` and SQL spot-checks
+- **Expected Completion**: ~87–97 minutes for ~116,414 verses, depending on system performance
+
+## Embedding Inspection in Python
+- Embeddings retrieved from the database may be a list, tuple, NumPy array, or string.
+- Use `.tolist()` for NumPy arrays, or `ast.literal_eval` for strings.
+- See [docs/known_issues.md](mdc:../../docs/known_issues.md) for robust inspection logic and troubleshooting.
+
+
+
+
+
+
+
+
+

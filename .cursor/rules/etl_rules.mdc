@@ -1,0 +1,11 @@
+---
+type: always
+title: ETL Process Guidelines
+description: Standards for ETL processes and data pipeline processing
+globs:
+- '**/etl/**/*.py'
+- '**/scripts/**/*.py'
+alwaysApply: false
+---
+
+# ETL Process Guidelines

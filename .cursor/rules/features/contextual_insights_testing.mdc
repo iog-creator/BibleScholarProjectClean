@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+type: agentRequested
+title: Contextual Insights API Test Guidelines
+description: |
+  Guidelines for the `test_contextual_insights.py` script to validate multiple verse cases and translation variants.
+globs:
+  - "scripts/test_contextual_insights.py"
+alwaysApply: false
+
+---
+
+# Testing Script Pattern
+
+- The test script should cover multiple verse references, for example: `John 1:1`, `Genesis 1:1`, `Psalm 23:1`.
+- It must verify that the API response contains all insight fields:
+  - `summary` (string)
+  - `theological_terms` (dict)
+  - `cross_references` (list)
+  - `historical_context` (string)
+  - `original_language_notes` (list)
+  - `related_entities` (dict)
+  - `translation_variants` (list)
+- `translation_variants` must include only valid public domain translations (`ASV`, `KJV`, `TAGNT`, `TAHOT`) and explicitly assert that licensed translations like `ESV` are excluded.
+- Print the full JSON response (`json.dumps(result, indent=2)`) for each test case to aid debugging.
+
+Example usage:
+```bash
+python scripts/test_contextual_insights.py
+```

@@ -1,0 +1,24 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Hebrew OT Words Debug Script Rule
+
+## Purpose
+This script helps developers and analysts debug and validate the population of word-level data in the bible.hebrew_ot_words table, especially after ETL or schema changes.
+
+## Usage
+- Run the script after any ETL or database update to confirm that words, Strong's IDs, and grammar codes are present for a given verse.
+- By default, it prints all words for Genesis 1:1. Edit the script to change the reference if needed.
+- If you see garbled output on Windows, set your terminal to UTF-8 (see script docstring).
+
+## When to Use
+- After running the TAHOT ETL pipeline
+- When debugging API or downstream feature issues related to Hebrew word data
+- When validating Strong's ID or grammar code extraction
+
+## Example
+```bash
+python scripts/debug_hebrew_ot_words.py
+```

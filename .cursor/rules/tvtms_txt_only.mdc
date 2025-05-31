@@ -1,0 +1,27 @@
+---
+description: TVTMS file format handling guidelines
+globs: 
+  - "**/tvtms/**/*.py"
+  - "**/scripts/*tvtms*.py"
+type: always
+title: TVTMS Text File Format Guidelines
+description: Standards for working with TVTMS text files in the BibleScholarProject
+globs:
+  - "src/etl/tvtms_*.py"
+  - "scripts/check_tvtms_txt.py"
+alwaysApply: false
+---
+
+# TVTMS Text File Format Guidelines
+
+This rule provides standards for working with TVTMS text files.
+
+This rule provides standards for working with TVTMS text files.
+
+---
+
+# TVTMS Text File Format Guidelines
+
+This rule provides standards for working with TVTMS text files.
+
+This rule provides standards for working with TVTMS text files.

@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+This rule validates that data types in ETL scripts match expected formats.
+
+// watcher test 3
+
+// watcher test 4
+
+```python
+params = params.get('data', {}); data = pd.DataFrame(params); expected_types = {'id': 'int64', 'value': 'object'}; mismatches = {col: {'expected': expected_types[col], 'actual': str(data[col].dtype)} for col in expected_types if col in data.columns and str(data[col].dtype) != expected_types[col]}; result = {'status': 'error' if mismatches else 'success', 'mismatches': mismatches if mismatches else 'None'}
+```
+

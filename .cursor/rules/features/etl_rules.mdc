@@ -1,0 +1,20 @@
+---
+type: restored
+title: features\etl_rules
+description: This file was automatically restored or completed.
+globs: []
+alwaysApply: false
+---
+
+type: agent requested
+title: ETL Rules
+description: Standards for ETL processes and data pipeline processing
+globs:
+  - "**/etl/**/*.py"
+  - "**/scripts/**/*.py"
+alwaysApply: false
+---
+
+# ETL Process Guidelines
+
+For comprehensive documentation, see [ETL Pipeline](docs/features/etl_pipeline.md).

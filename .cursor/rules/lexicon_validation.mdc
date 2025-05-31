@@ -1,0 +1,149 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Lexicon Validation and Missing Entry Handling
+
+## Overview
+
+The BibleScholarProject requires complete lexicon data for all referenced Strong's IDs to properly function. This rule provides guidelines for validating lexicon data and handling missing entries.
+
+## Required Validation
+
+### 1. Pre-Training Validation
+
+Before running any DSPy optimization or training, always validate lexicon completeness:
+
+```python
+def validate_lexicon_completeness(conn):
+    """Validate that all Strong's IDs used in text have lexicon entries."""
+    # Hebrew validation
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT DISTINCT h.strongs_id, COUNT(*) as occurrence_count
+        FROM bible.hebrew_ot_words h
+        LEFT JOIN bible.hebrew_entries l ON h.strongs_id = l.strongs_id
+        WHERE l.strongs_id IS NULL
+        GROUP BY h.strongs_id
+        ORDER BY occurrence_count DESC
+    """)
+    missing_hebrew = cursor.fetchall()
+    
+    # Greek validation
+    cursor.execute("""
+        SELECT DISTINCT g.strongs_id, COUNT(*) as occurrence_count
+        FROM bible.greek_nt_words g
+        LEFT JOIN bible.greek_entries l ON g.strongs_id = l.strongs_id
+        WHERE l.strongs_id IS NULL
+        GROUP BY g.strongs_id
+        ORDER BY occurrence_count DESC
+    """)
+    missing_greek = cursor.fetchall()
+    
+    return missing_hebrew, missing_greek
+```
+
+### 2. Handle Missing Entries
+
+When missing entries are found, they must be added to the lexicon:
+
+```python
+def add_missing_hebrew_entry(conn, strongs_id, gloss):
+    """Add a missing Hebrew lexicon entry."""
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO bible.hebrew_entries (strongs_id, gloss) VALUES (%s, %s)",
+            (strongs_id, gloss)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        print(f"Error adding Hebrew entry {strongs_id}: {e}")
+        return False
+
+def add_missing_greek_entry(conn, strongs_id, gloss):
+    """Add a missing Greek lexicon entry."""
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO bible.greek_entries (strongs_id, gloss) VALUES (%s, %s)",
+            (strongs_id, gloss)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        print(f"Error adding Greek entry {strongs_id}: {e}")
+        return False
+```
+
+## Common Missing Entry Types
+
+Pay special attention to these common missing entry types:
+
+1. **Proper Names**: Names of people and places (e.g., H0223 = Uriah)
+2. **Extended IDs**: IDs with letter suffixes (e.g., H0430A) 
+3. **Special Codes**: Technical grammatical codes (H9000-H9999)
+
+## Integration with DSPy Optimization
+
+Missing lexicon entries cause two types of failures in DSPy optimization:
+
+1. **Validation Errors**: Pre-training validation fails with "invalid lexicon references"
+2. **Runtime Errors**: Training examples containing missing IDs cause runtime failures
+
+Always fix lexicon issues before running DSPy optimization:
+
+```python
+def prepare_for_dspy_optimization():
+    # 1. Connect to database
+    conn = get_db_connection()
+    
+    # 2. Validate lexicon completeness
+    missing_hebrew, missing_greek = validate_lexicon_completeness(conn)
+    
+    # 3. Fix any missing entries
+    for strongs_id, count in missing_hebrew:
+        add_missing_hebrew_entry(conn, strongs_id, f"Auto-added entry ({count} occurrences)")
+    
+    for strongs_id, count in missing_greek:
+        add_missing_greek_entry(conn, strongs_id, f"Auto-added entry ({count} occurrences)")
+    
+    # 4. Verify fixes
+    missing_hebrew, missing_greek = validate_lexicon_completeness(conn)
+    
+    if missing_hebrew or missing_greek:
+        print("ERROR: Still missing lexicon entries after attempted fixes")
+        return False
+    
+    return True
+```
+
+## Theological Term Completeness
+
+Critical theological terms must have complete lexicon entries:
+
+| Term | Strong's ID | Minimum Required Count |
+|------|-------------|--------------|
+| Elohim | H430 | 2,600 |
+| YHWH | H3068 | 6,000 |
+| Adon | H113 | 335 |
+| Chesed | H2617 | 248 |
+| Aman | H539 | 100 |
+
+## Best Practices
+
+1. **Run Validation Frequently**: Validate lexicon completeness after each ETL process
+2. **Document Missing Entries**: Maintain a list of manually added entries
+3. **Use Descriptive Glosses**: For manually added entries, include origin information 
+4. **Validate Critical Terms**: Always check minimum counts for theological terms
+5. **Fix at Source**: When possible, update the ETL process to include missing entries
+
+## See Also
+
+- [Hebrew Lexicon Validation Documentation](docs/features/hebrew_lexicon_validation.md)
+- [HEBREW_STRONGS_FIXES.md](HEBREW_STRONGS_FIXES.md)
+- Source code in `src/etl/fix_hebrew_strongs_ids.py`

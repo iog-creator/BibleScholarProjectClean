@@ -1,0 +1,29 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- All new Python files and major edits must include:
+  - Robust, standardized logging using the project logging setup (e.g., logging module, log file, and console output)
+  - Comprehensive error handling with try/except blocks and clear, actionable error messages
+  - Enumeration and validation of all user inputs and API parameters
+  - Logging of all critical actions, errors, and API requests/responses
+  - Use of logger.exception for full stack traces on errors
+  - Early detection and logging of malformed requests or data
+  - Comments and docstrings explaining error handling and logging strategy
+- Review and update this rule as the project evolves to ensure best practices are enforced
+
+@Cursor Rules Guide
+
+# Log File Locking and Debugging
+
+## Rule
+- When running on Windows, log files may be locked for writing by a running server process (e.g., Python's logging.FileHandler).
+- The startup script will report 'LOCKED' if it cannot open the log for writing. This is expected and means the server is running and logging.
+- You can still read log files for debugging using any text editor or command-line tool that opens the file in read-only mode.
+- If you need to delete or truncate a log, stop the server first.
+- See [docs/known_issues.md](mdc:../docs/known_issues.md) for more details and troubleshooting.
+
+## Enforcement
+- All documentation and onboarding must clarify this behavior for new users.
+- All scripts and docs referencing log files must point to this rule.

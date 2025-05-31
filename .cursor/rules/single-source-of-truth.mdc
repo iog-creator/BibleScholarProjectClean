@@ -1,0 +1,15 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+- All documentation, onboarding, and project standards must be unified and live inside the project folder (`BibleScholarProjectv2`).
+- No documentation or scripts should exist outside the project folder.
+- All onboarding, setup, and usage instructions must be kept up-to-date in the main README and/or a single onboarding doc.
+- If any documentation is updated, all references and related docs must be checked for consistency.
+- Fragmented, duplicated, or outdated documentation must be removed or merged.
+- When in doubt, update the README and reference it as the canonical source.
+- All new documentation or rules must be created only if absolutely necessary, and must be referenced from the main onboarding doc or README.
+- This rule supersedes any previous documentation practices.
+
+@README.md

@@ -1,0 +1,23 @@
+---
+description: Guidelines for Hebrew theological term handling
+globs: 
+  - "src/etl/*.py"
+  - "src/api/*.py"
+type: always
+title: Theological Terms Standardization Guidelines
+description: Guidelines for handling and validating critical Hebrew theological terms and Strong's ID mappings
+globs:
+  - "src/etl/**/*term*.py"
+  - "src/api/**/*theological*.py"
+  - "src/etl/fix_hebrew_strongs_ids.py"
+  - "scripts/check_related_hebrew_words.py"
+alwaysApply: false
+---
+
+# Theological Terms Standardization Guidelines
+
+These critical Hebrew theological terms must always have the correct Strong's ID mappings.
+
+# Theological Terms Standardization Guidelines
+
+These critical Hebrew theological terms must always have the correct Strong's ID mappings.
