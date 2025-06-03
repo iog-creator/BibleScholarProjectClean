@@ -30,7 +30,7 @@
   },
   "api": {
     "lm_studio_url": "http://localhost:1234/v1",
-    "vector_search_url": "http://localhost:8000/search",
+    "vector_search_url": "http://localhost:5150/search",
     "database_url": "postgresql://postgres:postgres@localhost:5432/bible_db",
     "api_call_timeout": 30
   },

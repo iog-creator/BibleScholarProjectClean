@@ -1,0 +1,25 @@
+2025-06-01 08:29:07,794 - __main__ - INFO - Using API Base URL: http://localhost:5000
+2025-06-01 08:29:07,809 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.1.119:5050
+2025-06-01 08:29:07,809 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-01 08:29:07,815 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-01 08:29:08,745 - __main__ - INFO - Using API Base URL: http://localhost:5000
+2025-06-01 08:29:08,803 - werkzeug - WARNING -  * Debugger is active!
+2025-06-01 08:29:08,807 - werkzeug - INFO -  * Debugger PIN: 120-691-199
+2025-06-01 08:36:46,328 - werkzeug - INFO -  * Detected change in 'C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BibleScholarProjectv2\\src\\api\\api_app.py', reloading
+2025-06-01 08:36:46,768 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-01 08:36:47,605 - __main__ - INFO - Using API Base URL: http://localhost:5000
+2025-06-01 08:36:47,614 - werkzeug - WARNING -  * Debugger is active!
+2025-06-01 08:36:47,617 - werkzeug - INFO -  * Debugger PIN: 120-691-199
+2025-06-02 08:45:09,101 - numexpr.utils - INFO - Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+2025-06-02 08:45:09,101 - numexpr.utils - INFO - NumExpr defaulting to 16 threads.
+2025-06-02 08:45:26,068 - numexpr.utils - INFO - Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+2025-06-02 08:45:26,069 - numexpr.utils - INFO - NumExpr defaulting to 16 threads.
+2025-06-02 08:45:26,446 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.119:5000
+2025-06-02 08:45:26,446 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-02 08:45:26,452 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)

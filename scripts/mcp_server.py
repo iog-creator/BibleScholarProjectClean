@@ -108,24 +108,26 @@ except Exception as e:
 # Available tools
 AVAILABLE_TOOLS = [
     "check_ports",
-    "terminate_processes",
     "verify_data",
     "run_query",
-    "suggest_incremental_change",
-    "run_test",
-    "get_file_context",
-    "update_docs",
-    "log_action",
-    "normalize_reference",
     "enforce_etl_guidelines",
-    "check_pandas_nulls",
-    "enforce_pandas_types",
-    "validate_tvtms_counts",
-    "check_tvtms_format",
-    "validate_json_schema",
     "semantic_search",
-    "list_lmstudio_models"
+    "list_lmstudio_models",
+    "log_action"
 ]
+logger.info(f"AVAILABLE_TOOLS limited to: {AVAILABLE_TOOLS}")
+# Commented out unused tools for reliability
+# "terminate_processes",
+# "suggest_incremental_change",
+# "run_test",
+# "get_file_context",
+# "update_docs",
+# "normalize_reference",
+# "check_pandas_nulls",
+# "enforce_pandas_types",
+# "validate_tvtms_counts",
+# "check_tvtms_format",
+# "validate_json_schema",
 
 # Dynamic rule loading
 DYNAMIC_RULES = load_rules()
@@ -292,26 +294,38 @@ async def ping():
 
 @app.post("/jsonrpc")
 async def jsonrpc(request: Request):
-    print("/jsonrpc endpoint hit")
-    logger.info("/jsonrpc endpoint hit" + explain("jsonrpc", "a way for programs to talk to each other using JSON messages"))
+    logger.info("Received JSON-RPC request")
     try:
         body = await request.body()
+        if not body:
+            logger.error("Empty request body")
+            return JSONResponse(
+                content={"jsonrpc": "2.0", "error": {"code": -32600, "message": "Empty request body"}, "id": None},
+                status_code=400
+            )
         body_str = body.decode("utf-8")
-        print(f"/jsonrpc received raw: {body_str}")
-        logger.info(f"/jsonrpc received raw: {body_str}")
-        print(f"type(body_str): {type(body_str)}")
+        logger.info(f"Raw request: {body_str}")
+        try:
+            json.loads(body_str)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {str(e)}")
+            return JSONResponse(
+                content={"jsonrpc": "2.0", "error": {"code": -32700, "message": f"Invalid JSON: {str(e)}"}, "id": None},
+                status_code=400
+            )
         response = dispatch(body_str)
-        print(f"/jsonrpc dispatch response: {response}")
-        logger.info(f"/jsonrpc dispatch response: {response}")
-        if hasattr(response, 'content'):
-            print(f"/jsonrpc response.content: {response.content}")
-            logger.info(f"/jsonrpc response.content: {response.content}")
-            return JSONResponse(content=json.loads(response.content), status_code=200)
-        return JSONResponse(content=response, status_code=200)
+        logger.info(f"Dispatch response: {response}")
+        if hasattr(response, "content"):
+            resp_content = json.loads(response.content)
+        else:
+            resp_content = response
+        return JSONResponse(content=resp_content, status_code=200)
     except Exception as e:
-        print(f"/jsonrpc error: {str(e)}")
-        logger.error(f"/jsonrpc error: {str(e)}", exc_info=True)
-        return JSONResponse(content={"error": str(e), "explanation": "An error happened (something went wrong)" if teaching_mode else ""}, status_code=500)
+        logger.error(f"JSON-RPC error: {str(e)}", exc_info=True)
+        return JSONResponse(
+            content={"jsonrpc": "2.0", "error": {"code": -32603, "message": str(e)}, "id": None},
+            status_code=500
+        )
 
 @app.post("/rpc")
 async def rpc_alias(request: Request):
@@ -327,84 +341,153 @@ def listOfferings() -> Result:
             offerings.append(t)
     return Success({"offerings": offerings})
 
+def log_interaction(tool_name: str, params: dict, result):
+    try:
+        print(f"log_interaction called for {tool_name}")
+        logger.info(f"log_interaction called for {tool_name}")
+        import json
+        def is_json_serializable_type(obj):
+            return isinstance(obj, (dict, list, str, int, float, bool, type(None)))
+        def unwrap(obj):
+            seen = set()
+            while not is_json_serializable_type(obj):
+                if id(obj) in seen:
+                    break  # Prevent infinite loops
+                seen.add(id(obj))
+                if hasattr(obj, "_value"):
+                    obj = obj._value
+                    continue
+                if hasattr(obj, "result"):
+                    obj = obj.result
+                    continue
+                break
+            return obj
+        actual_result = unwrap(result)
+        print(f"[DEBUG] Final unwrapped result type: {type(actual_result)}; repr: {repr(actual_result)}")
+        logger.info(f"[DEBUG] Final unwrapped result type: {type(actual_result)}; repr: {repr(actual_result)}")
+        # Fallback: if not serializable, use str and log a warning
+        try:
+            json.dumps(actual_result)
+        except Exception as e:
+            print(f"[WARN] Result not serializable, using str: {e}")
+            logger.warning(f"[WARN] Result not serializable, using str: {e}")
+            actual_result = str(actual_result)
+        log_entry = {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "tool_name": tool_name,
+            "params": params,
+            "result": actual_result
+        }
+        with open("logs/interaction.log", "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry, default=str) + "\n")
+        logger.info(f"Logged interaction for {tool_name}")
+        generate_rule_from_interaction(tool_name, params, actual_result)
+    except Exception as e:
+        print(f"log_interaction error: {e}")
+        logger.error(f"log_interaction error: {e}")
+
+def generate_rule_from_interaction(tool_name: str, params: dict, result: dict):
+    try:
+        print(f"generate_rule_from_interaction called for {tool_name}")
+        logger.info(f"generate_rule_from_interaction called for {tool_name}")
+        if result.get("status") != "success":
+            print(f"generate_rule_from_interaction: result not success: {result}")
+            return
+        rule_name = f"auto_{tool_name}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        rule_content = f"""
+---
+name: {rule_name}
+description: Auto-generated from {tool_name} interaction
+alwaysApply: false
+type: automation
+globs: ["*.py", "*.sql"]
+---
+Tool: {tool_name}
+Params: {json.dumps(params, indent=2)}
+Result: {json.dumps(result, indent=2)}
+```python
+params = {json.dumps(params)}
+result = {json.dumps(result)}
+```
+"""
+        rule_path = f".cursor/rules/automation/{rule_name}.mdc"
+        os.makedirs(".cursor/rules/automation", exist_ok=True)
+        with open(rule_path, "w", encoding="utf-8") as f:
+            f.write(rule_content)
+        logger.info(f"Generated rule: {rule_name}")
+    except Exception as e:
+        print(f"generate_rule_from_interaction error: {e}")
+        logger.error(f"generate_rule_from_interaction error: {e}")
+
+def prune_rules():
+    """Prune outdated automation rules, keeping backups"""
+    import glob, re
+    rule_files = glob.glob(".cursor/rules/automation/auto_*.mdc")
+    for rule_file in rule_files:
+        rule_name = os.path.basename(rule_file).replace(".mdc", "")
+        with open(rule_file, "r", encoding="utf-8") as f:
+            content = f.read()
+        match = re.search(r"(\d{8}_\d{6})", rule_name)
+        if match:
+            rule_date = datetime.datetime.strptime(match.group(1), "%Y%m%d_%H%M%S")
+            if (datetime.datetime.now() - rule_date).days > 30:
+                backup_content = f"\n\n# Backup (ignore unless restore needed)\n{content}"
+                with open(rule_file, "a", encoding="utf-8") as f:
+                    f.write(backup_content)
+                with open(rule_file, "w", encoding="utf-8") as f:
+                    f.write("# Pruned rule - ready for new content\n")
+                logger.info(f"Pruned rule: {rule_name}, backup appended")
+
 @method
 def executeTool(tool_name: str, params: dict) -> Result:
+    logger.info(f"Executing tool: {tool_name} with params: {params}")
     # Dynamic tools
     if tool_name in DYNAMIC_TOOLS:
         try:
-            return Success(DYNAMIC_TOOLS[tool_name](params))
+            result = Success(DYNAMIC_TOOLS[tool_name](params))
+            log_interaction(tool_name, params, result)
+            return result
         except Exception as e:
-            return Success({"status": "error", "message": str(e)})
-    # Existing hardcoded tools
+            result = Success({"status": "error", "message": str(e)})
+            log_interaction(tool_name, params, result)
+            return result
     if tool_name not in AVAILABLE_TOOLS:
-        return Success({"status": "error", "message": f"Tool {tool_name} not found"})
+        result = Success({"status": "error", "message": f"Tool {tool_name} not found"})
+        log_interaction(tool_name, params, result)
+        return result
     try:
         if tool_name == "check_ports":
-            ports = params.get("ports", [])
-            return Success(check_ports(ports))
-        elif tool_name == "terminate_processes":
-            process_name = params.get("process_name", "python.exe")
-            return Success(terminate_processes(process_name))
+            result = Success(check_ports(params.get("ports", [])))
         elif tool_name == "verify_data":
             query = params.get("query")
             params_list = params.get("params", [])
-            return Success(verify_data(query, params_list))
+            result = Success(verify_data(query, params_list))
         elif tool_name == "run_query":
             query = params.get("query")
             params_list = params.get("params", [])
-            return Success(run_query(query, params_list))
-        elif tool_name == "suggest_incremental_change":
-            task_description = params.get("task_description")
-            return Success(suggest_incremental_change(task_description))
-        elif tool_name == "run_test":
-            test_command = params.get("test_command")
-            return Success(run_test(test_command))
-        elif tool_name == "get_file_context":
-            file_path = params.get("file_path")
-            return Success(get_file_context(file_path))
-        elif tool_name == "update_docs":
-            doc_file = params.get("doc_file")
-            content = params.get("content")
-            return Success(update_docs(doc_file, content))
-        elif tool_name == "log_action":
-            log_file = params.get("log_file")
-            action_message = params.get("action_message")
-            return Success(log_action(log_file, action_message))
-        elif tool_name == "normalize_reference":
-            ref = params.get("reference")
-            return Success(normalize_reference(ref))
+            result = Success(run_query(query, params_list))
         elif tool_name == "enforce_etl_guidelines":
             data_json = params.get("data_json")
-            return Success(enforce_etl_guidelines(data_json))
-        elif tool_name == "check_pandas_nulls":
-            data_json = params.get("data_json")
-            return Success(check_pandas_nulls(data_json))
-        elif tool_name == "enforce_pandas_types":
-            data_json = params.get("data_json")
-            expected_types = params.get("expected_types", {})
-            return Success(enforce_pandas_types(data_json, expected_types))
-        elif tool_name == "validate_tvtms_counts":
-            actual_count = params.get("actual_count")
-            expected_range = params.get("expected_range", [0, 0])
-            return Success(validate_tvtms_counts(actual_count, expected_range))
-        elif tool_name == "check_tvtms_format":
-            file_path = params.get("file_path")
-            return Success(check_tvtms_format(file_path))
-        elif tool_name == "validate_json_schema":
-            json_data = params.get("json_data")
-            schema = params.get("schema", {})
-            return Success(validate_json_schema(json_data, schema))
+            result = Success(enforce_etl_guidelines(data_json))
         elif tool_name == "semantic_search":
             query = params.get("query")
             translation = params.get("translation", "KJV")
             limit = params.get("limit", 10)
-            return Success(semantic_search(query, translation, limit))
+            result = Success(semantic_search(query, translation, limit))
         elif tool_name == "list_lmstudio_models":
-            return Success(list_lmstudio_models())
+            result = Success(list_lmstudio_models())
+        elif tool_name == "log_action":
+            log_file = params.get("log_file")
+            action_message = params.get("action_message")
+            result = Success(log_action(log_file, action_message))
         else:
-            return Success({"status": "error", "message": f"Tool {tool_name} not implemented"})
+            result = Success({"status": "error", "message": f"Tool {tool_name} not implemented"})
+        log_interaction(tool_name, params, result)
+        return result
     except Exception as e:
-        return Success({"status": "error", "message": str(e)})
+        result = Success({"status": "error", "message": str(e)})
+        log_interaction(tool_name, params, result)
+        return result
 
 @method
 def reload_rules() -> Result:
@@ -423,13 +506,6 @@ def check_ports(ports):
             if result.stdout:
                 return {"status": "error", "message": f"Port {port} is in use!"}
         return {"status": "success", "message": "All ports are free."}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def terminate_processes(process_name):
-    try:
-        result = subprocess.run(f"taskkill /F /IM {process_name} /T", shell=True, capture_output=True, text=True)
-        return {"status": "success", "message": "Processes terminated.", "output": result.stdout}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
@@ -454,53 +530,6 @@ def run_query(query, params):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def suggest_incremental_change(task_description):
-    try:
-        steps = task_description.split(" and ")
-        return {"status": "success", "steps": steps}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def run_test(test_command):
-    try:
-        result = subprocess.run(test_command, shell=True, capture_output=True, text=True)
-        with open("logs/test_results.log", "a", encoding="utf-8") as f:
-            f.write(f"[{datetime.datetime.now()}] Test command: {test_command}\nResult: {result.stdout}\n")
-        return {"status": "success", "output": result.stdout}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def get_file_context(file_path):
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return {"status": "success", "content": content}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def update_docs(doc_file, content):
-    try:
-        with open(doc_file, "a", encoding="utf-8") as f:
-            f.write(f"\n[{datetime.datetime.now()}] {content}\n")
-        return {"status": "success", "message": f"Updated {doc_file}"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def log_action(log_file, action_message):
-    try:
-        with open(log_file, "a", encoding="utf-8") as f:
-            f.write(f"[{datetime.datetime.now()}] {action_message}\n")
-        return {"status": "success", "message": f"Logged to {log_file}"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def normalize_reference(ref):
-    try:
-        normalized = ref.replace("Jn", "John")  # Placeholder; can be enhanced
-        return {"status": "success", "normalized_reference": normalized}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
 def enforce_etl_guidelines(data_json):
     try:
         data = pd.DataFrame(json.loads(data_json))
@@ -511,60 +540,6 @@ def enforce_etl_guidelines(data_json):
         if data.duplicated().any():
             return {"status": "error", "message": "Data contains duplicates"}
         return {"status": "success", "message": "Data validated for ETL processing"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def check_pandas_nulls(data_json):
-    try:
-        data = pd.DataFrame(json.loads(data_json))
-        null_counts = data.isnull().sum().to_dict()
-        if any(null_counts.values()):
-            return {"status": "warning", "message": "Null values found", "null_counts": null_counts}
-        return {"status": "success", "message": "No null values found"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def enforce_pandas_types(data_json, expected_types):
-    try:
-        data = pd.DataFrame(json.loads(data_json))
-        type_mismatches = {}
-        for column, expected_type in expected_types.items():
-            if column in data.columns:
-                actual_type = str(data[column].dtype)
-                if actual_type != expected_type:
-                    type_mismatches[column] = {"expected": expected_type, "actual": actual_type}
-        if type_mismatches:
-            return {"status": "error", "message": "Type mismatches found", "mismatches": type_mismatches}
-        return {"status": "success", "message": "All types match expected"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def validate_tvtms_counts(actual_count, expected_range):
-    try:
-        min_count, max_count = expected_range
-        if not (min_count <= actual_count <= max_count):
-            return {"status": "error", "message": f"Count {actual_count} outside expected range {min_count}-{max_count}"}
-        return {"status": "success", "message": "Count within expected range"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def check_tvtms_format(file_path):
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        for line in lines:
-            if not line.strip() or "|" not in line:
-                return {"status": "error", "message": f"Invalid TVTMS format in line: {line}"}
-        return {"status": "success", "message": "TVTMS file format validated"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-def validate_json_schema(json_data, schema):
-    try:
-        jsonschema.validate(instance=json.loads(json_data), schema=schema)
-        return {"status": "success", "message": "JSON schema validated"}
-    except jsonschema.exceptions.ValidationError as e:
-        return {"status": "error", "message": f"Schema validation failed: {str(e)}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
@@ -585,6 +560,14 @@ def list_lmstudio_models():
         return {"status": "success", "models": data.get("data", data)}
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+def log_action(log_file, action_message):
+    try:
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(f"[{datetime.datetime.now()}] {action_message}\n")
+        return {"status": "success", "message": f"Logged to {log_file}"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.get("/rules")
 async def list_rules():
@@ -805,6 +788,13 @@ AVAILABLE_TOOLS.append("list_log_files_status")
 @method
 def list_log_files_status_rpc() -> Result:
     return Success(list_log_files_status())
+
+# Schedule daily pruning of auto-generated rules with backups
+def schedule_prune_rules():
+    while True:
+        prune_rules()
+        time.sleep(86400)  # Wait 24 hours
+threading.Thread(target=schedule_prune_rules, daemon=True).start()
 
 if __name__ == "__main__":
     import uvicorn
