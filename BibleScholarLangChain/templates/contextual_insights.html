@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Contextual Insights{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <h1 class="text-center mb-4">
+        <i class="fas fa-lightbulb"></i> Contextual Insights
+    </h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" action="/contextual-insights">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="focus_type" class="form-label">Focus Type:</label>
+                        <select class="form-select" name="focus_type" id="focus_type">
+                            <option value="text_snippet" {% if input_data and input_data.type == 'text_snippet' %}selected{% endif %}>Text Snippet</option>
+                            <option value="verse" {% if input_data and input_data.type == 'verse' %}selected{% endif %}>Specific Verse</option>
+                            <option value="topic" {% if input_data and input_data.type == 'topic' %}selected{% endif %}>Topic Study</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="verse-input" class="mb-3" style="display: none;">
+                    <label for="reference" class="form-label">Bible Reference:</label>
+                    <input type="text" class="form-control" name="reference" id="reference" 
+                           placeholder="e.g., John 3:16, Romans 8:28, Psalm 23:1"
+                           value="{% if input_data and input_data.reference %}{{ input_data.reference }}{% endif %}">
+                </div>
+
+                <div id="topic-input" class="mb-3" style="display: none;">
+                    <label for="topic" class="form-label">Topic:</label>
+                    <input type="text" class="form-control" name="topic" id="topic" 
+                           placeholder="e.g., love, salvation, faith, hope"
+                           value="{% if input_data and input_data.query_text %}{{ input_data.query_text }}{% endif %}">
+                </div>
+
+                <div id="snippet-input" class="mb-3">
+                    <label for="snippet" class="form-label">Text Snippet:</label>
+                    <textarea class="form-control" name="snippet" id="snippet" rows="3" 
+                              placeholder="Enter a Bible verse, passage, or text you'd like to explore...">{% if input_data and input_data.text %}{{ input_data.text }}{% endif %}</textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-warning btn-lg">
+                        <i class="fas fa-lightbulb"></i> Generate Insights
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if insights %}
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">
+                <i class="fas fa-brain"></i> AI-Generated Insights
+                {% if insights.source %}
+                    <small class="text-muted">({{ insights.source }})</small>
+                {% endif %}
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if insights.summary %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-file-alt"></i> Summary</h6>
+                    <div class="alert alert-light">
+                        {{ insights.summary }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.theological_terms %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-book"></i> Theological Terms</h6>
+                    <div class="row">
+                        {% for term, definition in insights.theological_terms.items() %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-info">{{ term|title }}</h6>
+                                        <p class="card-text small">{{ definition }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.cross_references %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-external-link-alt"></i> Cross References</h6>
+                    <div class="row">
+                        {% for ref in insights.cross_references %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">{{ ref.reference }}</h6>
+                                        {% if ref.text %}
+                                            <p class="card-text small">{{ ref.text }}</p>
+                                        {% endif %}
+                                        {% if ref.connection_reason %}
+                                            <p class="card-text"><small class="text-muted">{{ ref.connection_reason }}</small></p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.historical_context %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-history"></i> Historical Context</h6>
+                    <div class="card border-secondary">
+                        <div class="card-body">
+                            <p class="card-text">{{ insights.historical_context }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.original_language_notes %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-language"></i> Original Language Notes</h6>
+                    <div class="row">
+                        {% for note in insights.original_language_notes %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-dark">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ note.word }}</h6>
+                                        <p class="card-text small">
+                                            <strong>Strong's ID:</strong> {{ note.strongs_id }}<br>
+                                            <strong>Transliteration:</strong> {{ note.transliteration }}<br>
+                                            <strong>Grammar:</strong> {{ note.grammar }}<br>
+                                            <strong>Definition:</strong> {{ note.definition }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.related_entities %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-users"></i> Related Entities</h6>
+                    <div class="row">
+                        {% if insights.related_entities.people %}
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">People</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            {% for person in insights.related_entities.people %}
+                                                <li><i class="fas fa-user"></i> {{ person }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if insights.related_entities.places %}
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0">Places</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            {% for place in insights.related_entities.places %}
+                                                <li><i class="fas fa-map-marker-alt"></i> {{ place }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% elif error %}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-info-circle"></i> About Contextual Insights
+            </h5>
+        </div>
+        <div class="card-body">
+            <p>Get deep, AI-powered analysis of Bible passages with:</p>
+            <ul>
+                <li><strong>Theological Analysis:</strong> Key terms and concepts explained</li>
+                <li><strong>Cross-References:</strong> Related verses and connections</li>
+                <li><strong>Historical Context:</strong> Background and setting</li>
+                <li><strong>Original Languages:</strong> Hebrew and Greek word studies</li>
+                <li><strong>Cultural Insights:</strong> Understanding the ancient world</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('focus_type').addEventListener('change', function() {
+    const focusType = this.value;
+    const verseInput = document.getElementById('verse-input');
+    const topicInput = document.getElementById('topic-input');
+    const snippetInput = document.getElementById('snippet-input');
+    
+    // Hide all inputs
+    verseInput.style.display = 'none';
+    topicInput.style.display = 'none';
+    snippetInput.style.display = 'none';
+    
+    // Show appropriate input
+    if (focusType === 'verse') {
+        verseInput.style.display = 'block';
+    } else if (focusType === 'topic') {
+        topicInput.style.display = 'block';
+    } else {
+        snippetInput.style.display = 'block';
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('focus_type').dispatchEvent(new Event('change'));
+});
+</script>
+{% endblock %} 

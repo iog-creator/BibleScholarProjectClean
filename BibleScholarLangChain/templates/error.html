@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Bible Scholar Search{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <div class="text-center">
+        <div class="mb-4">
+            <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+        </div>
+        
+        <h1 class="mb-3">Oops! Something went wrong</h1>
+        
+        {% if error %}
+            <div class="alert alert-danger">
+                <h5>Error Details:</h5>
+                <p class="mb-0">{{ error }}</p>
+            </div>
+        {% else %}
+            <p class="text-muted mb-4">We encountered an unexpected error while processing your request.</p>
+        {% endif %}
+        
+        <div class="mt-4">
+            <a href="/" class="btn btn-primary me-2">
+                <i class="fas fa-home"></i> Go Home
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+        
+        <div class="mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools"></i> Troubleshooting Tips
+                    </h5>
+                </div>
+                <div class="card-body text-start">
+                    <ul>
+                        <li>Check if the API server is running on port 5000</li>
+                        <li>Verify that LM Studio is running and accessible</li>
+                        <li>Ensure your database connection is working</li>
+                        <li>Try refreshing the page</li>
+                        <li>Check the <a href="/health">health status</a> page</li>
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            If the problem persists, check the application logs for more details.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

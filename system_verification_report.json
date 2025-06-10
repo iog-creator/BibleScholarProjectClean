@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-06-09T18:49:03.097385",
+  "overall_status": "OPERATIONAL",
+  "test_results": {
+    "ports_listening": true,
+    "health_endpoints": true,
+    "mcp_operations": true,
+    "file_structure": true,
+    "startup_script": true
+  },
+  "system_info": {
+    "api_server": "http://localhost:5000",
+    "web_ui_server": "http://localhost:5002",
+    "mcp_operations_count": 37,
+    "startup_command": ".\\start_servers.bat"
+  }
+}

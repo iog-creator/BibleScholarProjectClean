@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joanna Johnson Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333333;
+            margin: 0;
+            padding: 30px;
+            background-color: #F1F5F9;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #2A9D8F;
+            font-size: 32px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .subtitle {
+            font-family: 'Poppins', sans-serif;
+            color: #333333;
+            font-size: 18px;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: #333333;
+            font-size: 14px;
+            margin: 15px 0;
+            background-color: #F9FAFB;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2A9D8F;
+        }
+        .contact-info a {
+            color: #2A9D8F;
+            text-decoration: none;
+        }
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        .contact-info span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #2A9D8F;
+            font-size: 22px;
+            margin: 25px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 5px;
+        }
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            color: #333333;
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .job, .certifications {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #F9FAFB;
+            border-radius: 8px;
+            border-left: 4px solid #2A9D8F;
+        }
+        .job-title {
+            color: #2A9D8F;
+            font-weight: bold;
+        }
+        .job-details {
+            font-style: italic;
+            color: #6B7280;
+            font-size: 14px;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #F9FAFB;
+            border-radius: 8px;
+            border-left: 4px solid #2A9D8F;
+        }
+        .skill {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .skill-label {
+            font-weight: bold;
+            color: #333333;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .progress-bar {
+            background-color: #E5E7EB;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress {
+            background-color: #F4A261;
+            height: 100%;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Joanna Johnson, MA, LMHCA</h1>
+        <div class="subtitle">Licensed Mental Health Counselor Associate</div>
+        <div class="contact-info">
+            <span><i class="fas fa-map-marker-alt"></i> 9903 S. 78th Court #1, Yakima, WA 98908</span>
+            <span><i class="fas fa-phone"></i> <a href="tel:+15094064203">509-406-4203</a></span>
+            <span><i class="fas fa-envelope"></i> <a href="mailto:thefiveboos@gmail.com">thefiveboos@gmail.com</a></span>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-user"></i> Professional Summary</h2>
+            <div class="job">
+                <p>Dynamic Licensed Mental Health Counselor Associate with over three years of experience delivering trauma-informed, evidence-based therapy to diverse populations. Expert in Cognitive Behavioral Therapy (CBT), crisis intervention, and virtual therapy platforms, with a passion for supporting adults with PTSD, depression, and anxiety. Recognized by government auditors for exceptional documentation, consistently passing audits with precision. Committed to leveraging AI-assisted tools and telehealth expertise to enhance client outcomes in online counseling settings.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-star"></i> Core Competencies</h2>
+            <div class="skills-grid">
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-brain"></i> Cognitive Behavioral Therapy</div>
+                    <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-heart"></i> Empathy</div>
+                    <div class="progress-bar"><div class="progress" style="width: 95%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-shield-alt"></i> Crisis Management</div>
+                    <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-handshake"></i> De-escalation</div>
+                    <div class="progress-bar"><div class="progress" style="width: 80%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-stethoscope"></i> Patient Assessment</div>
+                    <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-comments"></i> Communicating</div>
+                    <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-database"></i> Electronic Health Records</div>
+                    <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-clock"></i> Time Management</div>
+                    <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-check-circle"></i> Accountability</div>
+                    <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-video"></i> Virtual Therapy Platforms</div>
+                    <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-label"><i class="fas fa-robot"></i> AI-Assisted Documentation</div>
+                    <div class="progress-bar"><div class="progress" style="width: 80%;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-briefcase"></i> Professional Experience</h2>
+            <div class="job">
+                <h3 class="job-title">Outpatient Therapist</h3>
+                <div class="job-details">Comprehensive Healthcare, Yakima, WA | March 2025 – Present | Supervisor: Sean Harrington</div>
+                <ul>
+                    <li>Deliver CBT-based therapy to adults with PTSD, depression, and anxiety via telehealth and in-person sessions in an integrated care environment.</li>
+                    <li>Create individualized treatment plans, safety plans, and service notes, ensuring compliance with clinical standards.</li>
+                    <li>Received praise from government TRL auditors for exceptional documentation, consistently passing personal audits year after year.</li>
+                    <li>Leverage AI-assisted documentation tools to enhance efficiency and accuracy in record-keeping.</li>
+                    <li>Collaborate with multidisciplinary teams to provide holistic care, enhancing client outcomes.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3 class="job-title">Acute Inpatient Therapist</h3>
+                <div class="job-details">Comprehensive Mental Health, Yakima, WA | March 2022 – March 2025</div>
+                <ul>
+                    <li>Conducted intake screenings, psychological assessments, and risk evaluations for diverse inpatient clients.</li>
+                    <li>Designed tailored therapeutic programs, focusing on crisis stabilization and family reunification for youth.</li>
+                    <li>Provided individual, group, and family counseling using trauma-informed care and CBT techniques.</li>
+                    <li>Partnered with external agencies to ensure regulatory compliance and seamless support.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3 class="job-title">Intern Counselor</h3>
+                <div class="job-details">Bethel Ridge Family Resources, Yakima, WA | August 2020 – March 2022</div>
+                <ul>
+                    <li>Provided counseling to individuals and couples, managing a caseload of 5–6 clients daily.</li>
+                    <li>Conducted needs assessments and collaborated on personalized treatment plans.</li>
+                    <li>Demonstrated empathetic support and adherence to state and federal guidelines.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Education</h2>
+            <div class="job">
+                <h3 class="job-title">Master of Arts in Mental Health Counseling</h3>
+                <div class="job-details">Colorado Christian University, Lakewood, CO | June 2019</div>
+                <ul>
+                    <li>GPA: 3.7 | Member, Chi Sigma Iota | Invited to National Board for Certified Counselors</li>
+                    <li>Specialized in trauma counseling for children and young adults.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3 class="job-title">Bachelor of Science in Human Development (Psychology)</h3>
+                <div class="job-details">Amridge University, Montgomery, AL | April 2014</div>
+                <ul>
+                    <li>GPA: 4.0 | Dean's List Honoree</li>
+                    <li>Applied psychological research to treatment planning.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-certificate"></i> Professional Development & Certifications</h2>
+            <div class="certifications">
+                <ul>
+                    <li>Licensed Mental Health Counselor Associate (LMHCA), Washington State</li>
+                    <li>Annual Trauma Counseling Training, 2019–2022 (excluding COVID restrictions)</li>
+                    <li>Trained in AI-Assisted Documentation Tools</li>
+                    <li>Proficient in EHR Platforms: Epic, Theranest</li>
+                    <li>Proficient in Telehealth Platforms: Zoom, Doxy.me</li>
+                    <li>Member, Chi Sigma Iota Counseling Honor Society</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-hand-holding-heart"></i> Volunteer Experience</h2>
+            <div class="job">
+                <h3 class="job-title">Crisis Line Volunteer</h3>
+                <div class="job-details">Yakima Crisis Center, Yakima, WA | August 2020 – January 2021</div>
+                <ul>
+                    <li>Provided crisis intervention to callers experiencing mental health emergencies.</li>
+                    <li>Coordinated with local resources for client safety and follow-up care.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

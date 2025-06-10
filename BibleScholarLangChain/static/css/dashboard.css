@@ -1,0 +1,181 @@
+/* Dashboard custom styles */
+
+#leftPanel { min-width: 200px; max-width: 250px; }
+#centerPanel { min-width: 500px; max-width: 600px; }
+#rightPanel { min-width: 400px; max-width: 450px; }
+
+#chatMessages { height: 500px; overflow-y: auto; padding: 10px; background-color: #FFFFFF; }
+.chat-msg { margin: 8px 0; padding: 8px 12px; border-radius: 8px; max-width: 80%; }
+.chat-msg-user { background: #E6F4FA; align-self: flex-end; }
+.chat-msg-assistant { background: #F5F3FF; align-self: flex-start; }
+
+#linkedCircle { transition: top 0.3s, left 0.3s; z-index: 10; }
+#biblicalTimeline, #worldTimeline, #historyDetails { border: 1.5px solid #5A32A3 !important; }
+.linked-events { background: #F8F9FA; border: 1px solid #E9ECEF; border-radius: 8px; padding: 12px 16px; font-size: 13px; max-height: 220px; overflow-y: auto; }
+.linked-events svg { vertical-align: middle; }
+.linked-events .d-flex { margin-bottom: 6px; }
+
+.timeline-container { min-height: 300px; }
+.timeline-container ul { padding-left: 20px; font-size: 14px; }
+.timeline-container li { margin-bottom: 10px; }
+.history-content img { width: 100px; height: auto; border: 1px solid #E9ECEF; border-radius: 4px; margin-bottom: 10px; }
+.history-content p { font-size: 11px; margin-bottom: 5px; word-wrap: break-word; }
+.history-content small { font-size: 10px; color: #6C757D; font-style: italic; }
+
+@media (min-width: 1440px) {
+    .dashboard-container { max-width: 1400px; }
+    #chatMessages { height: 650px !important; }
+    .timeline-container { min-height: 400px; }
+}
+@media (min-width: 1920px) {
+    .dashboard-container { max-width: 1600px; }
+    #chatMessages { height: 700px !important; }
+    .timeline-container { min-height: 450px; }
+}
+@media (max-width: 1200px) {
+    #leftPanel { min-width: 100%; max-width: 100%; margin-bottom: 20px; }
+    #centerPanel { min-width: 100%; max-width: 100%; margin-bottom: 20px; }
+    #rightPanel { min-width: 100%; max-width: 100%; }
+    #chatMessages { height: 400px !important; }
+    .timeline-container { min-height: 300px; }
+    .timeline-container > div { width: 100%; margin-bottom: 10px; }
+}
+@media (max-width: 768px) {
+    .row > div { 
+        width: 100%; 
+        margin-bottom: 20px; 
+    }
+}
+
+.dashboard-card .dashboard-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-card .dashboard-card-body {
+  background: #fff;
+}
+
+.btn-outline-teal {
+  color: #20C997;
+  border-color: #20C997;
+  background: #fff;
+}
+.btn-outline-teal:hover, .btn-outline-teal.active, .btn-outline-teal:focus {
+  color: #fff;
+  background-color: #20C997;
+  border-color: #20C997;
+}
+#leftPanel .btn-group .btn {
+  min-width: 60px;
+  margin-right: 2px;
+}
+#leftPanel .btn-group .btn:last-child {
+  margin-right: 0;
+}
+#leftPanel label.form-label {
+  font-weight: 600;
+  color: #495057;
+}
+#leftPanel .form-select-sm {
+  padding: 2px 8px;
+  height: 28px;
+}
+
+/* Placeholder for further custom styles */
+
+/* Expanded center panel styles */
+.col-md-7.expanded-center {
+  min-width: 900px !important;
+  max-width: 1200px !important;
+  transition: all 0.3s;
+}
+.col-md-3.shrunk-right {
+  min-width: 200px !important;
+  max-width: 250px !important;
+  transition: all 0.3s;
+}
+.col-md-1.shrunk-left {
+  min-width: 60px !important;
+  max-width: 80px !important;
+  transition: all 0.3s;
+}
+
+/* Dashboard CSS */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+}
+
+.verse-text {
+    font-size: 1.1rem;
+    font-style: italic;
+    padding: 1rem;
+    background-color: #f0f7ff;
+    border-left: 4px solid #0d6efd;
+    border-radius: 0.25rem;
+}
+
+.context-verses {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+}
+
+.insights-container {
+    margin-top: 1rem;
+}
+
+.similar-verse {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    border-left: 3px solid #6c757d;
+}
+
+.similar-verse:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.cross-reference {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    border-left: 3px solid #28a745;
+}
+
+.cross-reference:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.similarity-score {
+    float: right;
+    font-size: 0.8rem;
+    color: #6c757d;
+    background-color: #e9ecef;
+    padding: 0.2rem 0.4rem;
+    border-radius: 1rem;
+} 

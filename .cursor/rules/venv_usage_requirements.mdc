@@ -1,0 +1,138 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Virtual Environment Usage Requirements
+
+## 🚨 **CRITICAL RULE: ALWAYS USE BSPclean VENV**
+
+### **MANDATORY ACTIVATION**
+Before ANY Python operations, the BSPclean virtual environment MUST be activated:
+
+```powershell
+# ✅ REQUIRED: Activate BSPclean venv FIRST
+BSPclean\Scripts\Activate.ps1
+
+# ✅ VERIFY: Check you're in the right environment
+python --version  # Should show Python 3.12.3
+python -c "import sys; print(sys.executable)"  # Should show BSPclean path
+```
+
+## ❌ **CRITICAL ERRORS TO AVOID**
+
+### **Never Work Outside the Venv**
+```powershell
+# ❌ WRONG: Running Python without venv activation
+python script.py
+
+# ❌ WRONG: Installing packages outside venv  
+pip install package
+
+# ❌ WRONG: Testing MCP operations outside venv
+python -c "from mcp_universal_operations import ..."
+```
+
+### **Always Work Inside the Venv**
+```powershell
+# ✅ CORRECT: Activate first, then work
+BSPclean\Scripts\Activate.ps1
+(BSPclean) PS> python script.py
+(BSPclean) PS> pip install package
+(BSPclean) PS> python -c "from mcp_universal_operations import ..."
+```
+
+## 🎯 **CONSEQUENCES OF WORKING OUTSIDE VENV**
+
+### **Package Conflicts**
+- Wrong Python version (system vs venv)
+- Missing required packages (psycopg, langchain, dspy)
+- Import errors and module not found issues
+
+### **Cache Contamination**
+- `__pycache__` directories with wrong Python bytecode
+- .pyc files compiled for wrong Python version
+- Mixed imports from system and venv packages
+
+### **MCP Server Issues**
+- Cursor MCP server using wrong Python interpreter
+- MCP operations failing due to missing dependencies
+- Database connection failures
+
+## 🔧 **FIXING VENV CONTAMINATION**
+
+### **If You Worked Outside Venv**
+1. **Activate BSPclean venv immediately**:
+   ```powershell
+   BSPclean\Scripts\Activate.ps1
+   ```
+
+2. **Clear contaminated cache**:
+   ```powershell
+   Remove-Item "__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
+   ```
+
+3. **Test MCP operations**:
+   ```powershell
+   python -c "from mcp_universal_operations import universal_router; print('Operations:', len(universal_router.operation_registry))"
+   ```
+
+4. **Restart Cursor** to reload MCP server with correct Python
+
+## 📋 **VERIFICATION CHECKLIST**
+
+### **Before Starting Work**
+- [ ] BSPclean venv is activated (`(BSPclean)` in prompt)
+- [ ] Python path shows BSPclean: `python -c "import sys; print(sys.executable)"`
+- [ ] Required packages available: `python -c "import psycopg, langchain, dspy"`
+- [ ] MCP operations load: `python -c "from mcp_universal_operations import universal_router"`
+
+### **During Work**
+- [ ] Terminal prompt shows `(BSPclean) PS>`
+- [ ] All Python commands run in activated venv
+- [ ] No package installation outside venv
+
+### **After Work**
+- [ ] MCP operations still functional
+- [ ] No new `__pycache__` contamination
+- [ ] Cursor MCP server uses BSPclean Python
+
+## 🚨 **ENFORCEMENT**
+
+### **Pre-Command Checks**
+Before running ANY Python command:
+1. Verify `(BSPclean)` appears in terminal prompt
+2. If not, STOP and activate venv first
+3. Never proceed with system Python
+
+### **Auto-Activation Script**
+Create workspace startup script that automatically activates BSPclean:
+
+```powershell
+# activate_env.ps1 (already exists)
+BSPclean\Scripts\Activate.ps1
+Write-Host "✅ BSPclean virtual environment activated" -ForegroundColor Green
+python --version
+```
+
+### **Error Recovery**
+If contamination detected:
+1. Immediately activate BSPclean venv
+2. Clear all `__pycache__` directories
+3. Restart Cursor completely
+4. Test all operations in venv
+
+## 🎯 **SUCCESS CRITERIA**
+
+- ✅ Always work within BSPclean virtual environment
+- ✅ No package conflicts or import errors
+- ✅ MCP operations work consistently
+- ✅ Cursor MCP server uses correct Python interpreter
+- ✅ No cache contamination from wrong Python version
+
+
+---
+
+**This is a CRITICAL rule that must ALWAYS be followed to prevent serious issues with the project environment.**
+
+

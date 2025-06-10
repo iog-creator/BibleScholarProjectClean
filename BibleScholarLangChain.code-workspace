@@ -1,0 +1,39 @@
+{
+    "folders": [
+        {
+            "name": "BibleScholarLangChain",
+            "path": "./BibleScholarLangChain"
+        },
+        {
+            "name": "BSPclean (Virtual Environment)",
+            "path": "./BSPclean"
+        }
+    ],
+    "settings": {
+        "python.pythonPath": "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BSPclean\\Scripts\\python.exe",
+        "python.defaultInterpreterPath": "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BSPclean\\Scripts\\python.exe",
+        "python.terminal.activateEnvironment": true,
+        "terminal.integrated.defaultProfile.windows": "PowerShell",
+        "terminal.integrated.profiles.windows": {
+            "PowerShell": {
+                "source": "PowerShell",
+                "args": [
+                    "-NoExit",
+                    "-Command",
+                    "& 'C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BSPclean\\Scripts\\Activate.ps1'; Set-Location 'C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BibleScholarLangChain'"
+                ]
+            }
+        },
+        "terminal.integrated.cwd": "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BibleScholarLangChain",
+        "python.analysis.autoImportCompletions": true,
+        "git.ignoreLimitWarning": true
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.flake8",
+            "ms-python.pylint",
+            "ms-toolsai.jupyter"
+        ]
+    }
+} 

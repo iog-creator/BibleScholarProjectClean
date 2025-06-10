@@ -1,0 +1,114 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# MCP Workspace Architecture Rules
+
+## 🎯 **CORE PRINCIPLE**
+The MCP server must be **WORKSPACE-UNIVERSAL** and **PROJECT-AGNOSTIC** to work with any project dropped into the CursorMCPWorkspace folder.
+
+## 📁 **CORRECT ARCHITECTURE**
+
+```
+CursorMCPWorkspace/                    # 🟢 WORKSPACE ROOT
+├── mcp_universal_operations.py        # 🟢 UNIVERSAL OPERATIONS (WORKSPACE LEVEL)
+├── scripts/
+│   └── mcp_server_refactored.py      # 🟢 UNIVERSAL MCP SERVER
+├── .cursor/
+│   └── mcp.json                      # 🟢 MCP CONFIGURATION
+├── BibleScholarLangChain/             # 🟢 PROJECT 1 (uses workspace MCP)
+├── AnyOtherProject/                   # 🟢 PROJECT 2 (uses workspace MCP)
+└── archive/                          # 🔴 ARCHIVED PROJECTS
+```
+
+## ❌ **INCORRECT ARCHITECTURE**
+```
+CursorMCPWorkspace/
+├── BibleScholarLangChain/
+│   └── mcp_universal_operations.py   # ❌ PROJECT-SPECIFIC (WRONG!)
+└── scripts/
+    └── mcp_server_refactored.py      # ❌ IMPORTS FROM PROJECT (WRONG!)
+```
+
+## 🔧 **IMPLEMENTATION RULES**
+
+### **1. MCP Operations Location**
+- ✅ **MUST BE**: `CursorMCPWorkspace/mcp_universal_operations.py`
+- ❌ **NEVER**: Inside any specific project folder
+- ❌ **NEVER**: Duplicated across projects
+
+### **2. MCP Server Import**
+```python
+# ✅ CORRECT: Import from workspace root
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))  # Workspace root
+from mcp_universal_operations import execute_operation
+
+# ❌ WRONG: Import from specific project
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'BibleScholarLangChain'))
+```
+
+### **3. MCP Configuration**
+```json
+{
+  "mcpServers": {
+    "bible-scholar-mcp": {
+      "command": "python.exe",
+      "args": ["scripts/mcp_server_refactored.py", "--mcp"],
+      "cwd": "C:\\...\\CursorMCPWorkspace",
+      "env": {
+        "PYTHONPATH": "C:\\...\\CursorMCPWorkspace"
+      }
+    }
+  }
+}
+```
+
+## 🎯 **UNIVERSAL DESIGN PRINCIPLES**
+
+### **Database Agnostic**
+- Support multiple database connections
+- Auto-detect project-specific schemas
+- Fallback to generic operations
+
+### **Project Agnostic**
+- No hardcoded project paths
+- Dynamic project detection
+- Universal operation patterns
+
+### **Configuration Flexible**
+- Environment-based configuration
+- Project-specific overrides
+- Workspace-level defaults
+
+## 🚨 **ENFORCEMENT RULES**
+
+### **Before Any MCP Changes**
+1. ✅ Verify operations file is at workspace root
+2. ✅ Ensure server imports from workspace root
+3. ✅ Test with multiple projects
+4. ❌ Never tie MCP to specific project
+
+### **File Movement Rules**
+- ✅ Move project-specific MCP files to workspace root
+- ✅ Update all import paths to workspace root
+- ✅ Remove duplicate MCP implementations
+- ❌ Never create project-specific MCP servers
+
+## 📊 **SUCCESS CRITERIA**
+- ✅ Single `mcp_universal_operations.py` at workspace root
+- ✅ MCP server works with any project in workspace
+- ✅ No project-specific MCP dependencies
+- ✅ Easy to add new projects without MCP changes
+- ✅ Universal operations work across all project types
+
+## 🔄 **MIGRATION STEPS**
+1. Move MCP operations to workspace root
+2. Update server imports to workspace root
+3. Remove project-specific MCP files
+4. Test with multiple projects
+5. Verify universal functionality
+
+

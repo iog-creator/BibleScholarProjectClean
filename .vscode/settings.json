@@ -1,4 +1,16 @@
-{
-    "python.analysis.autoImportCompletions": true,
-    "python.pythonPath": "c:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\venv\\Scripts\\python.exe"
+﻿{
+    "python.terminal.activateEnvironment":  false,
+    "terminal.integrated.defaultProfile.windows":  "PowerShell",
+    "terminal.integrated.profiles.windows":  {
+                                                 "PowerShell":  {
+                                                                    "args":  [
+                                                                                 "-NoExit",
+                                                                                 "-Command",
+                                                                                 "\u0026 \u0027C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\workspace_profile.ps1\u0027"
+                                                                             ],
+                                                                    "source":  "PowerShell"
+                                                                }
+                                             },
+    "terminal.integrated.cwd":  "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace",
+    "python.defaultInterpreterPath":  "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BSPclean\\Scripts\\python.exe"
 }

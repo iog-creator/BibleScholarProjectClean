@@ -1,0 +1,244 @@
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+INFO:numexpr.utils:NumExpr defaulting to 16 threads.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:progress_tracker:Tables ensured and index created.
+INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:rules_loader:Loaded 123 rules from C:\Users\mccoy\Documents\Projects\Projects\CursorMCPWorkspace\.cursor\rules
+INFO:__main__:Starting MCP server for Cursor integration
+INFO:__main__:Loaded 123 rules, providing 12 tools
+INFO:__main__:Received request: initialize
+INFO:__main__:Sent response for: initialize
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:rules_loader:Loaded 123 rules from C:\Users\mccoy\Documents\Projects\Projects\CursorMCPWorkspace\.cursor\rules
+INFO:__main__:Starting MCP server for Cursor integration
+INFO:__main__:Loaded 123 rules, providing 12 tools
+INFO:__main__:Received request: initialize
+INFO:__main__:Sent response for: initialize
+INFO:__main__:Received request: notifications/initialized
+INFO:__main__:Sent response for: notifications/initialized
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:httpx:HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:rules_loader:Loaded 141 rules from C:\Users\mccoy\Documents\Projects\Projects\CursorMCPWorkspace\.cursor\rules
+INFO:__main__:Starting MCP server for Cursor integration
+INFO:__main__:Loaded 141 rules, providing 12 tools
+INFO:__main__:Received request: initialize
+INFO:__main__:Sent response for: initialize
+INFO:__main__:Received request: notifications/initialized
+INFO:__main__:Sent response for: notifications/initialized
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/call
+INFO:__main__:Sent response for: tools/call
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list
+INFO:__main__:Received request: tools/list
+INFO:__main__:Sent response for: tools/list

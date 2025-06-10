@@ -106,6 +106,37 @@ To validate that all rules properly reference documentation and vice versa:
 python scripts/validate_documentation.py
 ```
 
+## MCP Server Location and Startup
+
+The canonical MCP server for this workspace is located at:
+
+```
+scripts/mcp_server.py
+```
+
+**Startup Command:**
+
+```
+python scripts/mcp_server.py
+```
+
+**MCP Server Configuration (mcp.json):**
+
+```
+{
+    "mcpServers": {
+        "bible-scholar-mcp": {
+            "command": "python",
+            "args": ["scripts/mcp_server.py"],
+            "env": {"bspclean": "true"}
+        }
+    }
+}
+```
+
+- Always update this documentation if the server location or startup pattern changes.
+- Reference this section in onboarding, automation, and rule creation guides.
+
 ## See Also
 
 - [Documentation Standards](../../docs/CONTRIBUTING.md)

@@ -1,0 +1,15 @@
+{
+  "database": {
+    "connection_string": "postgresql://postgres:postgres@localhost:5432/bible_db"
+  },
+  "api": {
+    "lm_studio_url": "http://localhost:1234/v1"
+  },
+  "vector_search": {
+    "embedding_model": "bge-m3",
+    "embedding_length": 1024
+  },
+  "defaults": {
+    "model": "meta-llama-3.1-8b-instruct"
+  }
+}

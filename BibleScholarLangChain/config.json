@@ -1,0 +1,23 @@
+{
+    "database": {
+        "connection_string": "postgresql://postgres:postgres@127.0.0.1:5432/bible_db",
+        "schema": "bible"
+    },
+    "lm_studio": {
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+            "chat": "meta-llama-3.1-8b-instruct",
+            "embeddings": "text-embedding-bge-m3"
+        },
+        "timeout": 120
+    },
+    "server": {
+        "api_port": 5000,
+        "web_port": 5002,
+        "host": "0.0.0.0"
+    },
+    "paths": {
+        "project_root": "C:/Users/mccoy/Documents/Projects/Projects/CursorMCPWorkspace",
+        "logs": "C:/Users/mccoy/Documents/Projects/Projects/CursorMCPWorkspace/logs"
+    }
+} 

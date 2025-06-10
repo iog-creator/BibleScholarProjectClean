@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}LM Studio Connection Test{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <h1 class="text-center mb-4">
+        <i class="fas fa-cog"></i> LM Studio Connection Test
+    </h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-network-wired"></i> Connection Status
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if results %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong> 
+                            <span class="{% if results.connection_status == 'Connected' %}status-connected{% else %}status-disconnected{% endif %}">
+                                <i class="fas fa-{% if results.connection_status == 'Connected' %}check-circle{% else %}times-circle{% endif %}"></i>
+                                {{ results.connection_status }}
+                            </span>
+                        </p>
+                        <p><strong>LM Studio URL:</strong> <code>{{ results.lm_studio_url }}</code></p>
+                        <p><strong>Test Time:</strong> {{ results.test_timestamp }}</p>
+                    </div>
+                    
+                    {% if results.models %}
+                    <div class="col-md-6">
+                        <p><strong>Available Models:</strong></p>
+                        <ul class="list-group list-group-flush">
+                            {% for model in results.models.data %}
+                                <li class="list-group-item px-0">
+                                    <i class="fas fa-robot"></i> {{ model.id }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Testing connection...</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if results and results.connection_status == 'Connected' %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-comments"></i> Query Test
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if results.query_status == 'Success' %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> Query test successful!
+                </div>
+                
+                <h6><strong>Test Query:</strong></h6>
+                <div class="test-result">
+                    <p>{{ results.test_query }}</p>
+                </div>
+                
+                <h6><strong>LM Studio Response:</strong></h6>
+                <div class="test-result">
+                    <p>{{ results.test_response }}</p>
+                </div>
+            {% elif results.query_status == 'Failed' %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Query test failed!
+                </div>
+                <p><strong>Error:</strong> {{ results.query_error }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if results and results.connection_status == 'Disconnected' %}
+    <div class="card mb-4 border-warning">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">
+                <i class="fas fa-exclamation-triangle"></i> Troubleshooting
+            </h5>
+        </div>
+        <div class="card-body">
+            <p>LM Studio is not accessible. Please check the following:</p>
+            <ul>
+                <li>Make sure LM Studio is running</li>
+                <li>Verify that the server is started in LM Studio (Local Server tab)</li>
+                <li>Check that the server is listening on <code>localhost:1234</code></li>
+                <li>Ensure no firewall is blocking the connection</li>
+                <li>Try loading a model in LM Studio if none are loaded</li>
+            </ul>
+            
+            <div class="mt-3">
+                <h6>Quick Setup Guide:</h6>
+                <ol>
+                    <li>Open LM Studio</li>
+                    <li>Go to the "Local Server" tab</li>
+                    <li>Select a model to load</li>
+                    <li>Click "Start Server"</li>
+                    <li>Refresh this page to test again</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-flask"></i> Manual Test
+            </h5>
+        </div>
+        <div class="card-body">
+            <form id="manualTestForm">
+                <div class="mb-3">
+                    <label for="testPrompt" class="form-label">Test Prompt:</label>
+                    <textarea class="form-control" id="testPrompt" rows="3" 
+                              placeholder="Enter a question or prompt to test LM Studio...">What is the central message of John 3:16?</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send Test Query
+                </button>
+            </form>
+            
+            <div id="manualTestResult" class="mt-3" style="display: none;">
+                <h6>Response:</h6>
+                <div class="test-result">
+                    <div id="responseContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/test-lm-studio" class="btn btn-secondary">
+            <i class="fas fa-redo"></i> Refresh Test
+        </a>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('manualTestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const prompt = document.getElementById('testPrompt').value;
+    const resultDiv = document.getElementById('manualTestResult');
+    const responseContent = document.getElementById('responseContent');
+    
+    if (!prompt.trim()) {
+        alert('Please enter a test prompt');
+        return;
+    }
+    
+    // Show loading
+    responseContent.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Testing...';
+    resultDiv.style.display = 'block';
+    
+    // Send request
+    fetch('/api/lm-studio/direct', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            prompt: prompt,
+            max_tokens: 2048,
+            temperature: 0.7
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            responseContent.innerHTML = '<div class="alert alert-danger">Error: ' + data.error + '</div>';
+        } else {
+            responseContent.innerHTML = '<p>' + data.response + '</p>';
+        }
+    })
+    .catch(error => {
+        responseContent.innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+    });
+});
+</script>
+{% endblock %} 

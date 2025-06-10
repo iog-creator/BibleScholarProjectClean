@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Bible Scholar Tutor{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <h1 class="text-center mb-4">
+        <i class="fas fa-graduation-cap"></i> Bible Scholar Tutor
+    </h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" action="/tutor">
+                <div class="mb-3">
+                    <label for="query" class="form-label">Ask your Bible study question:</label>
+                    <textarea class="form-control" name="query" id="query" rows="3" 
+                              placeholder="e.g., What does it mean to have faith? How can I understand God's love? What is the significance of the cross?"
+                              required>{% if query %}{{ query }}{% endif %}</textarea>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-question-circle"></i> Ask the Tutor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if verses %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-book-open"></i> Related Bible Verses
+            </h5>
+        </div>
+        <div class="card-body">
+            {% for verse in verses %}
+                <div class="card mb-3 border-light">
+                    <div class="card-body">
+                        <h6 class="card-title text-primary">{{ verse.reference }}</h6>
+                        <p class="card-text">{{ verse.text }}</p>
+                        {% if verse.translation %}
+                            <small class="text-muted">{{ verse.translation }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if insights %}
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-brain"></i> Tutor's Insights
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if insights.explanation %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-lightbulb"></i> Explanation</h6>
+                    <div class="alert alert-light">
+                        {{ insights.explanation }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.key_points %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-list"></i> Key Points</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for point in insights.key_points %}
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success"></i> {{ point }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if insights.practical_application %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-hands-helping"></i> Practical Application</h6>
+                    <div class="card border-info">
+                        <div class="card-body">
+                            <p class="card-text">{{ insights.practical_application }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if insights.further_study %}
+                <div class="mb-4">
+                    <h6><i class="fas fa-book"></i> For Further Study</h6>
+                    <div class="row">
+                        {% for suggestion in insights.further_study %}
+                            <div class="col-md-6 mb-2">
+                                <div class="card border-secondary">
+                                    <div class="card-body py-2">
+                                        <small class="text-secondary">{{ suggestion }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> About the Tutor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>The Bible Scholar Tutor helps you:</p>
+                    <ul>
+                        <li>Find relevant Bible verses for your questions</li>
+                        <li>Understand complex theological concepts</li>
+                        <li>Apply biblical principles to daily life</li>
+                        <li>Discover deeper meanings in Scripture</li>
+                        <li>Connect related passages and themes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question"></i> Example Questions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Try asking questions like:</p>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="example-question">What does it mean to have faith?</a></li>
+                        <li><a href="#" class="example-question">How can I find peace in difficult times?</a></li>
+                        <li><a href="#" class="example-question">What is God's purpose for my life?</a></li>
+                        <li><a href="#" class="example-question">How do I forgive someone who hurt me?</a></li>
+                        <li><a href="#" class="example-question">What does the Bible say about love?</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Handle example question clicks
+document.querySelectorAll('.example-question').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('query').value = this.textContent;
+        document.getElementById('query').focus();
+    });
+});
+
+// Auto-resize textarea
+document.getElementById('query').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+});
+</script>
+{% endblock %} 
