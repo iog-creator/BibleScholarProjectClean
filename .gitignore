@@ -117,4 +117,79 @@ celerybeat.pid
 dmypy.json
 
 # Pyre type checker
-.pyre/ 
+.pyre/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Large data files and backups
+*.backup
+*_data_backup.sql
+*_complete_backup.sql
+bible_db_*_data*.sql
+*data*.sql
+
+# MCP and API temporary files
+mcp_temp/
+api_temp/
+
+# Archive directory (contains old projects)
+archive/*/data/*.sql
+archive/*/*.backup
+archive/*/logs/
+
+# Prevent accidental commits of sensitive files
+config/database.py
+config/secrets.py
+.env.local
+.env.production
+
+# Large SQL files (>10MB typically data dumps)
+# Allow structure files but block data files
+**/bible_db_*_data*.sql
+**/bible_db_2025-*-*_*.sql
+# Exception: allow structure files
+!**/bible_db_structure.sql
+!**/bible_db_*_structure.sql
+!database/bible_db_*.sql
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# Database connection files
+.pgpass
+database.ini 
