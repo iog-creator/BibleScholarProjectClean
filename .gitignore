@@ -46,6 +46,8 @@ logs/
 *.db
 *.sqlite
 *.sqlite3
+*.sql
+bible_db_*.sql
 
 # Environment variables
 .env
