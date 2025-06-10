@@ -33,6 +33,7 @@ BSPclean/
 # Archive directories (to prevent submodule issues)
 archive/BibleScholarLangChain/
 archive/BibleScholarProjectv2/
+wkhtmltopdf-packaging/
 
 # IDE
 .vscode/
