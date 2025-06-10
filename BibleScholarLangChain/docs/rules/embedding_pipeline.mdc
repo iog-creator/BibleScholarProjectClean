@@ -1,0 +1,61 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Embedding Pipeline Documentation
+
+## Current Status (May 2025: BGE-M3 Migration)
+
+- **Embedding Run**: In progress using LM Studio API
+    - `--batch_size 4096` (API batch size for LM Studio)
+    - `--db_insert_batch_size 2048` (database insert batch size)
+    - **Context window**: 512 tokens
+    - **Embeddings**: 1024-dimensional vectors stored in `bible.verse_embeddings`
+- **Validation**: Initial batch of 8192 embeddings (ASV translation) validated as correct (`vector` type, 1024 dimensions, no duplicates) via `test_vector_search.py` and SQL spot-checks
+- **Expected Completion**: ~87–97 minutes for ~116,414 verses, depending on system performance
+
+## Overview
+Generates verse embeddings for `KJV`, `ASV`, `TAHOT`, `YLT` using `generate_verse_embeddings.py`, storing in `bible.verse_embeddings` (~124k rows, ~31k per translation). Uses `pgvector` for `vector(1024)` embeddings.
+
+## Key Files
+- `generate_verse_embeddings.py`: Core embedding script (now converts numpy arrays to lists before DB insert).
+- `rebuild_bible_db_new.py`: ETL for `bible.verses`.
+- `load_kjv_bible.py`, `load_ylt_usfm.py`: Translation-specific ETL.
+
+## Pipeline
+1. **ETL**: Load `KJV`, `ASV`, `TAHOT`, `YLT` into `bible.verses` (~31k rows each).
+2. **Embedding**: Generate `vector(1024)` embeddings using LM Studio (`text-embedding-bge-m3`).
+3. **Storage**: Insert into `bible.verse_embeddings` in batches (now using Python lists, not numpy arrays).
+4. **Validation**: Check row counts, types, and dimensions via SQL.
+
+## Recent Changes (2025-05-19)
+- Fixed numpy array error: Embeddings are now converted to lists before DB insert, resolving `can't adapt type 'numpy.ndarray'`.
+- Batch insert performance: Now inserts 1024 embeddings per batch, with parallel jobs for each translation.
+- Added troubleshooting for numpy array errors and parallel job best practices.
+
+## Validation Checklist
+- **Pre-Run**:
+    ```bash
+    psql -U postgres -d bible_db -c "SELECT translation_source, COUNT(*) FROM bible.verses GROUP BY translation_source;"
+    ```
+    - Expect ~31k rows per `KJV`, `ASV`, `TAHOT`, `YLT`.
+- **During Run**:
+    ```bash
+    psql -U postgres -d bible_db -c "SELECT translation_source, COUNT(*) FROM bible.verse_embeddings GROUP BY translation_source;"
+    ```
+    - Expect row count to increase by batch size (e.g., 1024 per batch).
+- **Post-Run**:
+    ```bash
+    psql -U postgres -d bible_db -c "SELECT COUNT(*), translation_source FROM bible.verse_embeddings GROUP BY translation_source;"
+    psql -U postgres -d bible_db -c "SELECT verse_id, pg_typeof(embedding) FROM bible.verse_embeddings LIMIT 5;"
+    ```
+    - Type should be `vector`, dimension should be 1024.
+
+## Troubleshooting
+- If you see `can't adapt type 'numpy.ndarray'`, ensure embeddings are converted to lists before DB insert.
+- For best performance, run one job per translation in parallel, each with a large batch size (e.g., 1024).
+- Monitor logs for `[Batch N] Stored X embeddings in this batch` and increasing row counts.
+
+---
+_Last updated: 2025-05-19_

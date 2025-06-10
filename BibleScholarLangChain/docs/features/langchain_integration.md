@@ -1,0 +1,2 @@
+## LM Studio Embeddings Health Check (MCP-Enforced)
+Before any ETL or vector store load, a health check must be performed against the LM Studio embeddings endpoint (e.g., /v1/embeddings) using a known input. The MCP server enforces this check. If the endpoint does not return a valid embedding of the expected length, the process aborts with a clear error message. This requirement is mandatory for all future rules and documentation. 

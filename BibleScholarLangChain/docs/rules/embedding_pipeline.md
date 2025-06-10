@@ -1,0 +1,28 @@
+---
+
+## Current Status (May 2025: BGE-M3 Migration)
+
+- **Embedding Run**: In progress using LM Studio API
+    - `--batch_size 4096` (API batch size for LM Studio)
+    - `--db_insert_batch_size 2048` (database insert batch size)
+    - **Context window**: 512 tokens
+    - **Embeddings**: 1024-dimensional vectors stored in `bible.verse_embeddings`
+- **Validation**: Initial batch of 8192 embeddings (ASV translation) validated as correct (`vector` type, 1024 dimensions, no duplicates) via `test_vector_search.py` and SQL spot-checks
+- **Expected Completion**: ~87–97 minutes for ~116,414 verses, depending on system performance
+
+## 2025-05-19: LM Studio Embedding & Reranker Pipeline Update
+
+- **Embeddings**: All embeddings are generated via LM Studio's OpenAI-compatible API (`text-embedding-bge-m3`).
+- **Reranking**: All reranking is performed via LM Studio (`text-embedding-bge-reranker-v2-m3`), with cosine similarity computed in the API.
+- **No local reranker**: torch/transformers reranker code has been removed; all reranking is now via LM Studio API.
+- **Environment variables**:
+  - `LM_STUDIO_EMBEDDING_MODEL` = `text-embedding-bge-m3`
+  - `LM_STUDIO_EMBEDDINGS_URL` = `http://127.0.0.1:1234/v1/embeddings`
+- **Validation**:
+  - Test batch of 8 embeddings confirmed in the database (`vector(1024)`, NOT NULL).
+  - `/api/vector-search` endpoint returns valid JSON results using LM Studio for both embedding and reranking.
+- **Scalability**: The pipeline is now hardware-agnostic and can be run on any machine with LM Studio.
+
+> **Troubleshooting:** When inspecting embeddings in Python, the returned value may be a list, tuple, NumPy array, or string. Use `.tolist()` for NumPy arrays, or `ast.literal_eval` for strings. See [docs/known_issues.md](known_issues.md) for robust inspection logic.
+
+--- 

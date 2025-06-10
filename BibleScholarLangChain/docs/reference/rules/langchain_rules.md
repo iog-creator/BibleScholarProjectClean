@@ -1,0 +1,2 @@
+### Rule: LM Studio Embeddings Health Check
+All ETL/vector store processes must perform a health check against the LM Studio embeddings endpoint before processing. The MCP server must enforce this. If the endpoint does not return a valid embedding, abort with a clear error message. 
