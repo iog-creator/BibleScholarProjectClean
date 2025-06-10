@@ -1732,3 +1732,368 @@ class AutoSystemManager:
 auto_system = AutoSystemManager()
 
 # AUTO operations are now registered in the _build_operation_registry method
+
+# ========== DIRECT ENTRY FUNCTIONS FOR COMMON OPERATIONS ==========
+# These functions provide easier access without complex routing
+
+def quick_database_check() -> Dict[str, Any]:
+    """
+    Quick database connectivity and stats check
+    
+    USAGE: quick_database_check()
+    RETURNS: Database status, connection info, and basic stats
+    """
+    try:
+        router = UniversalOperationRouter()
+        return router._check_database_stats_real({}, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Database check failed: {e}"}
+
+def quick_server_status() -> Dict[str, Any]:
+    """
+    Quick check of all server statuses (API, Web UI, LM Studio)
+    
+    USAGE: quick_server_status()
+    RETURNS: Status of ports 5000, 5002, 1234 and health endpoints
+    """
+    try:
+        router = UniversalOperationRouter()
+        return router._monitor_system_health({}, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Server status check failed: {e}"}
+
+def quick_hebrew_analysis(word: str = None, limit: int = 10) -> Dict[str, Any]:
+    """
+    Quick Hebrew word analysis
+    
+    USAGE: quick_hebrew_analysis("love") or quick_hebrew_analysis()
+    PARAMS: word (optional) - Hebrew word to search for
+            limit (optional) - Number of results to return
+    RETURNS: Hebrew word analysis with morphology and Strong's numbers
+    """
+    try:
+        router = UniversalOperationRouter()
+        params = {"word": word, "limit": limit} if word else {"limit": limit}
+        return router._analyze_hebrew_words_real(params, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Hebrew analysis failed: {e}"}
+
+def quick_greek_analysis(word: str = None, limit: int = 10) -> Dict[str, Any]:
+    """
+    Quick Greek word analysis
+    
+    USAGE: quick_greek_analysis("agape") or quick_greek_analysis()
+    PARAMS: word (optional) - Greek word to search for
+            limit (optional) - Number of results to return
+    RETURNS: Greek word analysis with morphology and Strong's numbers
+    """
+    try:
+        router = UniversalOperationRouter()
+        params = {"word": word, "limit": limit} if word else {"limit": limit}
+        return router._analyze_greek_words_real(params, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Greek analysis failed: {e}"}
+
+def quick_verse_search(query: str, limit: int = 5) -> Dict[str, Any]:
+    """
+    Quick verse search across all translations
+    
+    USAGE: quick_verse_search("faith", 10)
+    PARAMS: query - Search term or phrase
+            limit (optional) - Number of verses to return
+    RETURNS: Matching verses with book, chapter, verse, and text
+    """
+    try:
+        router = UniversalOperationRouter()
+        params = {"query": query, "limit": limit}
+        return router._search_verses_real(params, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Verse search failed: {e}"}
+
+def quick_lexicon_search(term: str, language: str = "both") -> Dict[str, Any]:
+    """
+    Quick lexicon search for Hebrew and/or Greek terms
+    
+    USAGE: quick_lexicon_search("love", "hebrew") or quick_lexicon_search("faith")
+    PARAMS: term - Term to search for
+            language - "hebrew", "greek", or "both" (default)
+    RETURNS: Lexicon entries with definitions and Strong's numbers
+    """
+    try:
+        router = UniversalOperationRouter()
+        params = {"term": term, "language": language}
+        return router._search_lexicon_real(params, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Lexicon search failed: {e}"}
+
+def quick_vector_search(query: str, limit: int = 5) -> Dict[str, Any]:
+    """
+    Quick semantic vector search using embeddings
+    
+    USAGE: quick_vector_search("love of God", 10)
+    PARAMS: query - Semantic search query
+            limit (optional) - Number of similar verses to return
+    RETURNS: Semantically similar verses with similarity scores
+    """
+    try:
+        router = UniversalOperationRouter()
+        params = {"query": query, "limit": limit}
+        return router._api_vector_search(params, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Vector search failed: {e}"}
+
+def quick_start_servers() -> Dict[str, Any]:
+    """
+    Quick server startup for API and Web UI
+    
+    USAGE: quick_start_servers()
+    RETURNS: Server startup status and health checks
+    """
+    try:
+        router = UniversalOperationRouter()
+        return router._api_start_servers({}, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Server startup failed: {e}"}
+
+def quick_stop_servers() -> Dict[str, Any]:
+    """
+    Quick server shutdown for API and Web UI
+    
+    USAGE: quick_stop_servers()
+    RETURNS: Server shutdown status
+    """
+    try:
+        router = UniversalOperationRouter()
+        return router._api_stop_servers({}, "standard")
+    except Exception as e:
+        return {"status": "error", "message": f"Server shutdown failed: {e}"}
+
+def quick_rule_check(rule_type: str = "all") -> Dict[str, Any]:
+    """
+    Quick rule compliance check
+    
+    USAGE: quick_rule_check("database") or quick_rule_check()
+    PARAMS: rule_type - "database", "hebrew", "etl", "documentation", or "all"
+    RETURNS: Rule compliance status and any violations
+    """
+    try:
+        router = UniversalOperationRouter()
+        if rule_type == "all":
+            return router._enforce_all_rules({}, "standard")
+        else:
+            params = {"rule_type": rule_type}
+            return router.execute_operation({
+                "domain": "rules",
+                "operation": "enforce", 
+                "target": rule_type,
+                "params": params
+            })
+    except Exception as e:
+        return {"status": "error", "message": f"Rule check failed: {e}"}
+
+def get_system_instructions() -> Dict[str, Any]:
+    """
+    Get comprehensive system instructions and available operations
+    
+    USAGE: get_system_instructions()
+    RETURNS: Complete guide to available MCP operations and usage
+    """
+    instructions = {
+        "status": "success",
+        "message": "BibleScholarLangChain MCP Server Instructions",
+        "quick_functions": {
+            "Database Operations": {
+                "quick_database_check()": "Check database connectivity and stats",
+                "quick_hebrew_analysis(word, limit)": "Analyze Hebrew words with morphology",
+                "quick_greek_analysis(word, limit)": "Analyze Greek words with morphology", 
+                "quick_verse_search(query, limit)": "Search verses across translations",
+                "quick_lexicon_search(term, language)": "Search Hebrew/Greek lexicon",
+                "quick_vector_search(query, limit)": "Semantic similarity search"
+            },
+            "Server Management": {
+                "quick_server_status()": "Check all server health (API, Web UI, LM Studio)",
+                "quick_start_servers()": "Start API and Web UI servers",
+                "quick_stop_servers()": "Stop API and Web UI servers"
+            },
+            "System Validation": {
+                "quick_rule_check(rule_type)": "Check rule compliance (database, hebrew, etc.)",
+                "get_system_instructions()": "Show this help guide"
+            }
+        },
+        "advanced_operations": {
+            "execute_operation(params)": {
+                "description": "Full operation router with 37+ operations",
+                "domains": ["rules", "system", "data", "api", "integration", "utility", "batch", "auto"],
+                "example": {
+                    "domain": "data",
+                    "operation": "analyze", 
+                    "target": "hebrew_words",
+                    "params": {"word": "love", "limit": 10}
+                }
+            }
+        },
+        "server_endpoints": {
+            "API Server": "http://localhost:5000/health",
+            "Web UI Server": "http://localhost:5002/health", 
+            "LM Studio": "http://localhost:1234/v1/models"
+        },
+        "database_info": {
+            "connection": "postgresql://postgres:password@127.0.0.1:5432/bible_db",
+            "hebrew_entries": "12,743 entries",
+            "greek_entries": "160,185 entries",
+            "driver": "psycopg3 (dict_row factory)"
+        },
+        "usage_examples": [
+            "quick_database_check()",
+            "quick_hebrew_analysis('אהב')",
+            "quick_verse_search('faith', 10)",
+            "quick_server_status()",
+            "quick_rule_check('database')"
+        ]
+    }
+    return instructions
+
+def get_operation_help(operation_name: str = None) -> Dict[str, Any]:
+    """
+    Get detailed help for specific operations
+    
+    USAGE: get_operation_help("quick_verse_search") or get_operation_help()
+    PARAMS: operation_name (optional) - Specific operation to get help for
+    RETURNS: Detailed usage instructions and examples
+    """
+    if not operation_name:
+        return get_system_instructions()
+    
+    help_docs = {
+        "quick_database_check": {
+            "description": "Check database connectivity, stats, and health",
+            "usage": "quick_database_check()",
+            "returns": "Database status, connection info, table counts",
+            "example": "result = quick_database_check()"
+        },
+        "quick_hebrew_analysis": {
+            "description": "Analyze Hebrew words with morphology and Strong's numbers",
+            "usage": "quick_hebrew_analysis(word, limit)",
+            "parameters": {
+                "word": "Hebrew word to search (optional)",
+                "limit": "Number of results (default: 10)"
+            },
+            "returns": "Hebrew word analysis with morphology",
+            "examples": [
+                "quick_hebrew_analysis('אהב')",
+                "quick_hebrew_analysis(limit=20)"
+            ]
+        },
+        "quick_verse_search": {
+            "description": "Search verses across all translations",
+            "usage": "quick_verse_search(query, limit)",
+            "parameters": {
+                "query": "Search term or phrase (required)",
+                "limit": "Number of verses (default: 5)"
+            },
+            "returns": "Matching verses with references and text",
+            "examples": [
+                "quick_verse_search('faith')",
+                "quick_verse_search('love of God', 10)"
+            ]
+        },
+        "execute_operation": {
+            "description": "Full operation router with 37+ operations",
+            "usage": "execute_operation(params)",
+            "parameters": {
+                "domain": "Operation domain (rules, system, data, api, etc.)",
+                "operation": "Operation type (analyze, search, enforce, etc.)",
+                "target": "Operation target (hebrew_words, database, etc.)",
+                "params": "Additional parameters (dict)"
+            },
+            "examples": [
+                {
+                    "domain": "data",
+                    "operation": "analyze",
+                    "target": "hebrew_words", 
+                    "params": {"word": "love"}
+                },
+                {
+                    "domain": "system",
+                    "operation": "check",
+                    "target": "ports",
+                    "params": {}
+                }
+            ]
+        }
+    }
+    
+    if operation_name in help_docs:
+        return {
+            "status": "success",
+            "operation": operation_name,
+            "help": help_docs[operation_name]
+        }
+    else:
+        available_ops = list(help_docs.keys())
+        return {
+            "status": "error",
+            "message": f"Operation '{operation_name}' not found",
+            "available_operations": available_ops,
+            "suggestion": "Use get_system_instructions() for complete guide"
+        }
+
+# ========== CONVENIENCE ALIASES ==========
+# Short aliases for common operations
+
+def db_check():
+    """Alias for quick_database_check()"""
+    return quick_database_check()
+
+def server_status():
+    """Alias for quick_server_status()"""
+    return quick_server_status()
+
+def search_verses(query: str, limit: int = 5):
+    """Alias for quick_verse_search()"""
+    return quick_verse_search(query, limit)
+
+def hebrew_search(word: str = None, limit: int = 10):
+    """Alias for quick_hebrew_analysis()"""
+    return quick_hebrew_analysis(word, limit)
+
+def greek_search(word: str = None, limit: int = 10):
+    """Alias for quick_greek_analysis()"""
+    return quick_greek_analysis(word, limit)
+
+def help_mcp(operation: str = None):
+    """Alias for get_operation_help()"""
+    return get_operation_help(operation)
+
+# ========== EXPORT ALL FUNCTIONS ==========
+# Make all functions available for import
+
+__all__ = [
+    # Main router
+    'execute_operation', 'universal_router', 'UniversalOperationRouter',
+    
+    # Quick functions
+    'quick_database_check', 'quick_server_status', 'quick_hebrew_analysis',
+    'quick_greek_analysis', 'quick_verse_search', 'quick_lexicon_search', 
+    'quick_vector_search', 'quick_start_servers', 'quick_stop_servers',
+    'quick_rule_check',
+    
+    # Help functions
+    'get_system_instructions', 'get_operation_help',
+    
+    # Convenience aliases
+    'db_check', 'server_status', 'search_verses', 'hebrew_search', 
+    'greek_search', 'help_mcp',
+    
+    # System classes
+    'AutoSystemManager'
+]
+
+print(f"[MCP-EXPORT] ✅ Exported {len(__all__)} functions and classes")
+print("[MCP-EXPORT] 🎯 Quick functions available:")
+print("[MCP-EXPORT]   • Database: quick_database_check, quick_hebrew_analysis, quick_greek_analysis")
+print("[MCP-EXPORT]   • Search: quick_verse_search, quick_lexicon_search, quick_vector_search") 
+print("[MCP-EXPORT]   • Servers: quick_server_status, quick_start_servers, quick_stop_servers")
+print("[MCP-EXPORT]   • System: quick_rule_check, get_system_instructions, get_operation_help")
+print("[MCP-EXPORT]   • Aliases: db_check, server_status, search_verses, hebrew_search, greek_search, help_mcp")
+print("[MCP-EXPORT] 📚 Use get_system_instructions() or help_mcp() for complete usage guide")
