@@ -4,6 +4,13 @@ Universal MCP Operations with Real Database Integration
 Enhanced with actual Bible database operations from existing implementations
 Last updated: 2025-01-27 17:30:00 - FULLY OPERATIONAL SYSTEM
 
+Copyright (c) 2025 BibleScholarLangChain Project
+
+Licensed under the BibleScholarLangChain Personal Biblical Use License.
+This software is free for personal biblical study, research, and educational use.
+Commercial use requires written permission and payment of licensing fees.
+See LICENSE file for full terms.
+
 CURRENT WORKING STATE (2025-01-27):
 ✅ API Server: http://localhost:5000 - OPERATIONAL
 ✅ Web UI Server: http://localhost:5002 - OPERATIONAL  

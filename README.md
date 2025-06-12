@@ -7,7 +7,7 @@
 
 **🔒 Personal Biblical Use Only** - This software is licensed for **free personal biblical study, research, and educational use only**. Commercial use requires written permission and payment of licensing fees. See [LICENSE](LICENSE) for full terms.
 
-**For commercial licensing inquiries, please contact: [LICENSE_CONTACT_EMAIL]**
+**For commercial licensing inquiries, please contact: mccoyb00@duck.com**
 
 ## 🚀 Quick Start
 
