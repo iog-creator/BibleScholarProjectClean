@@ -1,0 +1,397 @@
+{
+  "input": {
+    "reference": "beginning",
+    "type": "keyword"
+  },
+  "insights": {
+    "arabic_data": [],
+    "cross_references": [
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Gen 1:1",
+        "text": "In the beginning God created the heavens and the earth.",
+        "translation": "ASV"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Gen 1:1",
+        "text": "In the beginning God created the heaven and the earth.",
+        "translation": "KJV"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Gen 1:1",
+        "text": "בְּ/רֵאשִׁ֖ית בָּרָ֣א אֱלֹהִ֑ים אֵ֥ת הַ/שָּׁמַ֖יִם וְ/אֵ֥ת הָ/אָֽרֶץ\\׃",
+        "translation": "TAHOT"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Gen 1:1",
+        "text": "In the beginning of God's preparing the heavens and the earth —",
+        "translation": "YLT"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Isa 1:26",
+        "text": "and I will restore thy judges as at the first, and thy counsellors as at the beginning: afterward thou shalt be called The city of righteousness, a faithful town.",
+        "translation": "ASV"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Isa 1:26",
+        "text": "And I will restore thy judges as at the first, and thy counsellors as at the beginning: afterward thou shalt be called, The city of righteousness, the faithful city.",
+        "translation": "KJV"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Isa 1:26",
+        "text": "And I give back thy judges as at the first, And thy counsellors as in the beginning, After this thou art called, 'A city of righteousness — a faithful city.'",
+        "translation": "YLT"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Isa 18:2",
+        "text": "That sendeth ambassadors by the sea, even in vessels of bulrushes upon the waters, {saying}, Go, ye swift messengers, to a nation scattered and peeled, to a people terrible from their beginning hither...",
+        "translation": "KJV"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Isa 18:2",
+        "text": "that sendeth ambassadors by the sea, even in vessels of papyrus upon the waters, [saying], Go, ye swift messengers, to a nation tall and smooth, to a people terrible from their beginning onward, a nat...",
+        "translation": "ASV"
+      },
+      {
+        "reason": "thematic_cross_reference",
+        "reference": "Isa 18:2",
+        "text": "That is sending by sea ambassadors, Even with implements of reed on the face of the waters, — Go, ye light messengers, Unto a nation drawn out and peeled, Unto a people fearful from its beginning and ...",
+        "translation": "YLT"
+      }
+    ],
+    "historical_context": "**Cross-References:**",
+    "lexical_data": [
+      {
+        "definition": ": first<br>adj<br>1) first, primary, former<br>1a) former (of time)<br>1a1) ancestors<br>1a2) former things<br>1b) foremost (of location)<br>1c) first (in time)<br>1d) first, chief (in degree)<br>adv<br>2) first, before, formerly, at first",
+        "lemma": "first",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H7223",
+        "transliteration": "ba./ri.sho.Nah",
+        "word": "בָּ/רִאשׁוֹנָֽה\\׃"
+      },
+      {
+        "definition": null,
+        "lemma": null,
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H1121",
+        "transliteration": "ve.nei-",
+        "word": "בְנֵי\\־"
+      },
+      {
+        "definition": "1) not, no<br>1a) not (with verb-absolute prohibition)<br>1b) not (with modifier-negation)<br>1c) nothing (subst)<br>1d) without (with particle)<br>1e) before (of time)<BR>Aramaic equivalent: <i>la</i> (לָא \"not\" H3809)",
+        "lemma": "not",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H3808",
+        "transliteration": "ve./Lo'",
+        "word": "וְ/לֹ֥א"
+      },
+      {
+        "definition": "1) not, no<br>1a) not (with verb-absolute prohibition)<br>1b) not (with modifier-negation)<br>1c) nothing (subst)<br>1d) without (with particle)<br>1e) before (of time)<BR>Aramaic equivalent: <i>la</i> (לָא \"not\" H3809)",
+        "lemma": "not",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H3808",
+        "transliteration": "ve./lo'-",
+        "word": "וְ/לֹא\\־"
+      },
+      {
+        "definition": "1) to plant, fasten, fix, establish<br>1a) (Qal)<br>1a1) to plant<br>1a2) to plant, establish (fig.)<br>1b) (Niphal)<br>1b1) to be planted<br>1b2) to be established (fig.)",
+        "lemma": "to plant",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H5193",
+        "transliteration": "u./ne.ta'.Ti./hu",
+        "word": "וּ/נְטַעְתִּ֙י/הוּ֙"
+      },
+      {
+        "definition": "1) to settle down, abide, dwell, tabernacle, reside<br>1a) (Qal)<br>1a1) to settle down to abide<br>1a2) to abide, dwell, reside<br>1b) (Piel)<br>1b1) to make settle down, establish<br>1b2) to make or cause to dwell<br>1c) (Hiphil)<br>1c1) to lay, place, set, establish, settle, fix<br>1c2) to cause to dwell or abide<BR>Aramaic equivalent: <i>she.khan</i> (שְׁכֵן \"to dwell\" H7932)",
+        "lemma": "to dwell",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H7931",
+        "transliteration": "ve./sha.Khan",
+        "word": "וְ/שָׁכַ֣ן"
+      },
+      {
+        "definition": null,
+        "lemma": null,
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H7760",
+        "transliteration": "ve./sam.Ti",
+        "word": "וְ/שַׂמְתִּ֣י"
+      },
+      {
+        "definition": ": again/continue/more[instances]<br>1) to add, increase, do again<br>1a) (Qal) to add, increase, do again<br>1b) (Niphal)<br>1b1) to join, join oneself to<br>1b2) to be joined, be added to<br>1c) (Hiphil)<br>1c1) to cause to add, increase<br>1c2) to do more, do again",
+        "lemma": "to add: again",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H3254",
+        "transliteration": "yo.Si.fu",
+        "word": "יוֹסִ֤יפוּ"
+      },
+      {
+        "definition": "1) tremble, quake, rage, quiver, be agitated, be excited, be perturbed<br>1a)(Qal) to quake, be disquieted, be excited, be perturbed<br>1b) (Hiphil) to cause to quake, disquiet, enrage, disturb<br>1c) (Hithpael) to excite oneself",
+        "lemma": "to tremble",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H7264",
+        "transliteration": "yir.Gaz",
+        "word": "יִרְגַּ֖ז"
+      },
+      {
+        "definition": "A man living at the time of the Patriarchs, first mentioned at Gen.25.26; <br> son of: Isaac (H3327) and Rebekah (H7259); <br> brother of: Esau (H6215); married to Rachel (H7354), Leah (H3812), Zilpah (H2153) and Bilhah (H1090A); <br> father of: Reuben (H7205), Simeon (H8095), Levi (H3878), Judah (H3063), Dan (H1835H), Naphtali (H5321), Gad (H1410), Asher (H0836), Issachar (H3485), Zebulun (H2074), Dinah (H1783), Joseph (H3130) and Benjamin (H1144); also called Jacob frequently <BR> § Israel = \"God prevails\"<br>1) the second name for Jacob given to him by God after his wrestling with the angel at Peniel<br>2) the name of the descendants and the nation of the descendants of Jacob<br>2a) the name of the nation until the death of Solomon and the split<br>2b) the name used and given to the northern kingdom consisting of the 10 tribes under Jeroboam; the southern kingdom was known as Judah<br>2c) the name of the nation after the return from exile<br>",
+        "lemma": "Israel",
+        "morphology": {
+          "code": "N/A",
+          "description": "N/A"
+        },
+        "strongs_id": "H3478",
+        "transliteration": "Yis.ra.'El",
+        "word": "יִשְׂרָאֵ֤ל"
+      }
+    ],
+    "morphology_codes": [],
+    "original_language_notes": [
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "first",
+        "meaning": ": first<br>adj<br>1) first, primary, former<br>1a) former (of time)<br>1a1) ancestors<br>1a2) former things<br>1b) foremost (of location)<br>1c) first (in time)<br>1d) first, chief (in degree)<br>adv<br>2) first, before, formerly, at first",
+        "strongs_id": "H7223",
+        "transliteration": "ba./ri.sho.Nah",
+        "usage": null,
+        "word": "בָּ/רִאשׁוֹנָֽה\\׃"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": null,
+        "meaning": null,
+        "strongs_id": "H1121",
+        "transliteration": "ve.nei-",
+        "usage": null,
+        "word": "בְנֵי\\־"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "not",
+        "meaning": "1) not, no<br>1a) not (with verb-absolute prohibition)<br>1b) not (with modifier-negation)<br>1c) nothing (subst)<br>1d) without (with particle)<br>1e) before (of time)<BR>Aramaic equivalent: <i>la</i> (לָא \"not\" H3809)",
+        "strongs_id": "H3808",
+        "transliteration": "ve./Lo'",
+        "usage": null,
+        "word": "וְ/לֹ֥א"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "not",
+        "meaning": "1) not, no<br>1a) not (with verb-absolute prohibition)<br>1b) not (with modifier-negation)<br>1c) nothing (subst)<br>1d) without (with particle)<br>1e) before (of time)<BR>Aramaic equivalent: <i>la</i> (לָא \"not\" H3809)",
+        "strongs_id": "H3808",
+        "transliteration": "ve./lo'-",
+        "usage": null,
+        "word": "וְ/לֹא\\־"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "to plant",
+        "meaning": "1) to plant, fasten, fix, establish<br>1a) (Qal)<br>1a1) to plant<br>1a2) to plant, establish (fig.)<br>1b) (Niphal)<br>1b1) to be planted<br>1b2) to be established (fig.)",
+        "strongs_id": "H5193",
+        "transliteration": "u./ne.ta'.Ti./hu",
+        "usage": null,
+        "word": "וּ/נְטַעְתִּ֙י/הוּ֙"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "to dwell",
+        "meaning": "1) to settle down, abide, dwell, tabernacle, reside<br>1a) (Qal)<br>1a1) to settle down to abide<br>1a2) to abide, dwell, reside<br>1b) (Piel)<br>1b1) to make settle down, establish<br>1b2) to make or cause to dwell<br>1c) (Hiphil)<br>1c1) to lay, place, set, establish, settle, fix<br>1c2) to cause to dwell or abide<BR>Aramaic equivalent: <i>she.khan</i> (שְׁכֵן \"to dwell\" H7932)",
+        "strongs_id": "H7931",
+        "transliteration": "ve./sha.Khan",
+        "usage": null,
+        "word": "וְ/שָׁכַ֣ן"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": null,
+        "meaning": null,
+        "strongs_id": "H7760",
+        "transliteration": "ve./sam.Ti",
+        "usage": null,
+        "word": "וְ/שַׂמְתִּ֣י"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "to add: again",
+        "meaning": ": again/continue/more[instances]<br>1) to add, increase, do again<br>1a) (Qal) to add, increase, do again<br>1b) (Niphal)<br>1b1) to join, join oneself to<br>1b2) to be joined, be added to<br>1c) (Hiphil)<br>1c1) to cause to add, increase<br>1c2) to do more, do again",
+        "strongs_id": "H3254",
+        "transliteration": "yo.Si.fu",
+        "usage": null,
+        "word": "יוֹסִ֤יפוּ"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "to tremble",
+        "meaning": "1) tremble, quake, rage, quiver, be agitated, be excited, be perturbed<br>1a)(Qal) to quake, be disquieted, be excited, be perturbed<br>1b) (Hiphil) to cause to quake, disquiet, enrage, disturb<br>1c) (Hithpael) to excite oneself",
+        "strongs_id": "H7264",
+        "transliteration": "yir.Gaz",
+        "usage": null,
+        "word": "יִרְגַּ֖ז"
+      },
+      {
+        "grammar_code": "N/A",
+        "language": "Hebrew",
+        "lemma": "Israel",
+        "meaning": "A man living at the time of the Patriarchs, first mentioned at Gen.25.26; <br> son of: Isaac (H3327) and Rebekah (H7259); <br> brother of: Esau (H6215); married to Rachel (H7354), Leah (H3812), Zilpah (H2153) and Bilhah (H1090A); <br> father of: Reuben (H7205), Simeon (H8095), Levi (H3878), Judah (H3063), Dan (H1835H), Naphtali (H5321), Gad (H1410), Asher (H0836), Issachar (H3485), Zebulun (H2074), Dinah (H1783), Joseph (H3130) and Benjamin (H1144); also called Jacob frequently <BR> § Israel = \"God prevails\"<br>1) the second name for Jacob given to him by God after his wrestling with the angel at Peniel<br>2) the name of the descendants and the nation of the descendants of Jacob<br>2a) the name of the nation until the death of Solomon and the split<br>2b) the name used and given to the northern kingdom consisting of the 10 tribes under Jeroboam; the southern kingdom was known as Judah<br>2c) the name of the nation after the return from exile<br>",
+        "strongs_id": "H3478",
+        "transliteration": "Yis.ra.'El",
+        "usage": null,
+        "word": "יִשְׂרָאֵ֤ל"
+      }
+    ],
+    "proper_names": [],
+    "related_entities": {
+      "people": [],
+      "relationships": []
+    },
+    "semantic_matches": [
+      {
+        "reference": "Mat 24:8",
+        "similarity": 0.0,
+        "text": "But all these things are the beginning of travail.",
+        "translation": "ASV"
+      },
+      {
+        "reference": "Psa 100:0",
+        "similarity": 0.0,
+        "text": "מִזְמ֥וֹר לְ/תוֹדָ֑ה",
+        "translation": "TAHOT"
+      },
+      {
+        "reference": "Psa 13:4",
+        "similarity": 0.0,
+        "text": "פֶּן\\־ יֹאמַ֣ר אֹיְבִ֣/י יְכָלְתִּ֑י/ו צָרַ֥/י יָ֝גִ֗ילוּ כִּ֣י אֶמּֽוֹט\\׃",
+        "translation": "TAHOT"
+      },
+      {
+        "reference": "Mat 24:8",
+        "similarity": 0.0,
+        "text": "All these {are} the beginning of sorrows.",
+        "translation": "KJV"
+      },
+      {
+        "reference": "Psa 73:7",
+        "similarity": 0.0,
+        "text": "יָ֭צָא מֵ/חֵ֣לֶב עֵינֵ֑/מוֹ עָ֝בְר֗וּ מַשְׂכִּיּ֥וֹת לֵבָֽב\\׃",
+        "translation": "TAHOT"
+      }
+    ],
+    "summary": "Comprehensive biblical analysis of the query.",
+    "theological_terms": {
+      "Beginning": "The starting point of creation and divine action",
+      "Creation": "God's act of bringing everything into existence",
+      "Word": "Divine expression and creative power",
+      "first": ": first<br>adj<br>1) first, primary, former<br>1a) former (of time)<br>1a1) ancestors<br>1a2) former things<br>1b) foremost (of location)<br>1c) first (in time)<br>1d) first, chief (in degree)<br>adv<br>2) first, before, formerly, at first",
+      "not": "1) not, no<br>1a) not (with verb-absolute prohibition)<br>1b) not (with modifier-negation)<br>1c) nothing (subst)<br>1d) without (with particle)<br>1e) before (of time)<BR>Aramaic equivalent: <i>la</i> (לָא \"not\" H3809)",
+      "to plant": "1) to plant, fasten, fix, establish<br>1a) (Qal)<br>1a1) to plant<br>1a2) to plant, establish (fig.)<br>1b) (Niphal)<br>1b1) to be planted<br>1b2) to be established (fig.)"
+    },
+    "translation_variants": [
+      {
+        "text": "On that day then hath David given at the beginning to give thanks to Jehovah by the hand of Asaph and his brethren: —",
+        "translation": "YLT"
+      },
+      {
+        "text": "Also I will ordain a place for my people Israel, and will plant them, and they shall dwell in their place, and shall be moved no more; neither shall the children of wickedness waste them any more, as at the beginning,",
+        "translation": "KJV"
+      },
+      {
+        "text": "That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we beheld, and our hands handled, concerning the Word of life",
+        "translation": "ASV"
+      },
+      {
+        "text": "That which was from the beginning, which we have heard, which we have seen with our eyes, which we have looked upon, and our hands have handled, of the Word of life;",
+        "translation": "KJV"
+      },
+      {
+        "text": "That which was from the beginning, that which we have heard, that which we have seen with our eyes, that which we did behold, and our hands did handle, concerning the Word of the Life —",
+        "translation": "YLT"
+      },
+      {
+        "text": "Beloved, no new commandment write I unto you, but an old commandment which ye had from the beginning: the old commandment is the word which ye heard.",
+        "translation": "ASV"
+      },
+      {
+        "text": "Brethren, I write no new commandment unto you, but an old commandment which ye had from the beginning. The old commandment is the word which ye have heard from the beginning.",
+        "translation": "KJV"
+      },
+      {
+        "text": "Brethren, a new command I write not to you, but an old command, that ye had from the beginning — the old command is the word that ye heard from the beginning;",
+        "translation": "YLT"
+      },
+      {
+        "text": "I write unto you, fathers, because ye know him who is from the beginning. I write unto you, young men, because ye have overcome the evil one. I have written unto you, little children, because ye know the Father.",
+        "translation": "ASV"
+      },
+      {
+        "text": "I write unto you, fathers, because ye have known him {that is} from the beginning. I write unto you, young men, because ye have overcome the wicked one. I write unto you, little children, because ye have known the Father.",
+        "translation": "KJV"
+      },
+      {
+        "text": "I write to you, fathers, because ye have known him who [is] from the beginning; I write to you, young men, because ye have overcome the evil. I write to you, little youths, because ye have known the Father:",
+        "translation": "YLT"
+      },
+      {
+        "text": "I have written unto you, fathers, because ye know him who is from the beginning. I have written unto you, young men, because ye are strong, and the word of God abideth in you, and ye have overcome the evil one.",
+        "translation": "ASV"
+      },
+      {
+        "text": "I have written unto you, fathers, because ye have known him {that is} from the beginning. I have written unto you, young men, because ye are strong, and the word of God abideth in you, and ye have overcome the wicked one.",
+        "translation": "KJV"
+      },
+      {
+        "text": "I did write to you, fathers, because ye have known him who [is] from the beginning; I did write to you, young men, because ye are strong, and the word of God in you doth remain, and ye have overcome the evil.",
+        "translation": "YLT"
+      },
+      {
+        "text": "As for you, let that abide in you which ye heard from the beginning. If that which ye heard from the beginning abide in you, ye also shall abide in the Son, and in the Father.",
+        "translation": "ASV"
+      }
+    ],
+    "versification_mappings": []
+  },
+  "processing_time_seconds": 17.2
+}

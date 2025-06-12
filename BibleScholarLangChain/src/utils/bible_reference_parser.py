@@ -313,7 +313,7 @@ CANONICAL_TO_DB = {
     'Matthew': 'Mat',
     'Mark': 'Mar',
     'Luke': 'Luk',
-    'John': 'Joh',
+    'John': 'Jhn',
     'Acts': 'Act',
     'Romans': 'Rom',
     '1 Corinthians': '1Co',

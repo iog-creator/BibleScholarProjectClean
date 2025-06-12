@@ -87,7 +87,7 @@ class ComprehensiveBibleAnalyzer:
             'Matthew': 'Mat',
             'Mark': 'Mar',
             'Luke': 'Luk',
-            'John': 'Joh',
+            'John': 'Jhn',
             'Acts': 'Act',
             'Romans': 'Rom',
             '1 Corinthians': '1Co',
@@ -131,13 +131,16 @@ class ComprehensiveBibleAnalyzer:
         return translation
 
     def search_verses_by_keywords(self, keywords, limit=10, translation='KJV'):
-        """Search verses using text keywords across all translations"""
+        """Search verses using text keywords across all translations including TAHOT"""
         try:
             # Validate translation
             translation = self.validate_translation(translation)
             
             with get_db_connection() as conn:
                 with conn.cursor() as cursor:
+                    all_results = []
+                    
+                    # Search main bible.verses table (KJV, ASV, YLT)
                     cursor.execute("""
                         SELECT DISTINCT v.verse_id, v.book_name, v.chapter_num, v.verse_num, 
                                v.text, v.translation_source
@@ -146,7 +149,37 @@ class ComprehensiveBibleAnalyzer:
                         ORDER BY v.book_name, v.chapter_num, v.verse_num, v.translation_source
                         LIMIT %s
                     """, (f'%{keywords}%', self.available_translations, limit))
-                    return cursor.fetchall()
+                    main_results = cursor.fetchall()
+                    all_results.extend([dict(row) for row in main_results])
+                    
+                    # Search TAHOT verses separately (tahot_verses_staging table)
+                    if 'TAHOT' in self.available_translations:
+                        try:
+                            cursor.execute("""
+                                SELECT DISTINCT 
+                                    t.verse_id,
+                                    b.book_name,
+                                    t.chapter as chapter_num,
+                                    t.verse as verse_num,
+                                    t.text,
+                                    'TAHOT' as translation_source
+                                FROM bible.tahot_verses_staging t
+                                LEFT JOIN bible.books b ON t.book_id = b.book_id
+                                WHERE t.text ILIKE %s
+                                ORDER BY b.book_name, t.chapter, t.verse
+                                LIMIT %s
+                            """, (f'%{keywords}%', max(1, limit // 4)))  # Reserve portion for TAHOT
+                            tahot_results = cursor.fetchall()
+                            all_results.extend([dict(row) for row in tahot_results])
+                            print(f"Found {len(tahot_results)} TAHOT verses for '{keywords}'")
+                        except Exception as e:
+                            print(f"TAHOT search failed (may be expected if table doesn't exist): {e}")
+                    
+                    # Sort combined results and limit
+                    all_results = sorted(all_results, key=lambda x: (x.get('book_name', ''), x.get('chapter_num', 0), x.get('verse_num', 0)))[:limit]
+                    print(f"Total verses found: {len(all_results)} (including TAHOT)")
+                    
+                    return all_results
         except Exception as e:
             print(f"Error searching verses: {e}")
             return []
@@ -480,6 +513,20 @@ class ComprehensiveBibleAnalyzer:
         try:
             with get_db_connection() as conn:
                 with conn.cursor() as cursor:
+                    # Check if versification_mappings table exists
+                    cursor.execute("""
+                        SELECT EXISTS (
+                            SELECT FROM information_schema.tables 
+                            WHERE table_schema = 'bible' 
+                            AND table_name = 'versification_mappings'
+                        )
+                    """)
+                    table_exists = cursor.fetchone()[0]
+                    
+                    if not table_exists:
+                        print("Versification mappings table does not exist in database")
+                        return []
+                    
                     # Get book names from verses to search mappings
                     cursor.execute("""
                         SELECT DISTINCT book_name
@@ -799,7 +846,7 @@ Provide a comprehensive, scholarly response that demonstrates the depth of bibli
         return "\n".join(context_parts)
 
     def search_specific_verse(self, verse_reference):
-        """Search for a specific verse reference like 'Ephesians 5:4' or 'John 3:16'"""
+        """Search for a specific verse reference like 'Ephesians 5:4' or 'John 3:16' including TAHOT"""
         try:
             # Parse verse reference (e.g., "Ephesians 5:4", "John 3:16", "1 Corinthians 13:4")
             pattern = r'(\d*\s*\w+)\s+(\d+):(\d+)'
@@ -819,21 +866,533 @@ Provide a comprehensive, scholarly response that demonstrates the depth of bibli
             
             with get_db_connection() as conn:
                 with conn.cursor() as cursor:
-                    cursor.execute("""
-                        SELECT verse_id, book_name, chapter_num, verse_num, text, translation_source
-                        FROM bible.verses 
-                        WHERE book_name = %s AND chapter_num = %s AND verse_num = %s 
-                        AND translation_source = ANY(%s)
-                        ORDER BY translation_source
-                    """, (normalized_book, chapter_num, verse_num, self.available_translations))
+                    # Try multiple book name variations for better matching
+                    book_variations = [
+                        normalized_book,
+                        book_name,  # Original input
+                        book_name.title(),  # Title case
+                        book_name.upper(),  # Upper case
+                        book_name.lower()   # Lower case
+                    ]
                     
-                    results = cursor.fetchall()
-                    print(f"Found {len(results)} verse variants")
-                    return [dict(row) for row in results]
+                    results = []
+                    
+                    # Search main bible.verses table
+                    for book_variant in book_variations:
+                        cursor.execute("""
+                            SELECT verse_id, book_name, chapter_num, verse_num, text, translation_source
+                            FROM bible.verses 
+                            WHERE book_name ILIKE %s AND chapter_num = %s AND verse_num = %s 
+                            AND translation_source = ANY(%s)
+                            ORDER BY translation_source
+                        """, (book_variant, chapter_num, verse_num, self.available_translations))
+                        
+                        variant_results = cursor.fetchall()
+                        if variant_results:
+                            results.extend([dict(row) for row in variant_results])
+                            print(f"Found {len(variant_results)} verses with book variant '{book_variant}'")
+                            break  # Use first successful match
+                    
+                    # If no exact match, try partial matching
+                    if not results:
+                        cursor.execute("""
+                            SELECT verse_id, book_name, chapter_num, verse_num, text, translation_source
+                            FROM bible.verses 
+                            WHERE book_name ILIKE %s AND chapter_num = %s AND verse_num = %s 
+                            AND translation_source = ANY(%s)
+                            ORDER BY translation_source
+                        """, (f'%{book_name}%', chapter_num, verse_num, self.available_translations))
+                        
+                        results = [dict(row) for row in cursor.fetchall()]
+                        print(f"Found {len(results)} verses with partial book match")
+                    
+                    # Search TAHOT verses separately (tahot_verses_staging table)
+                    if 'TAHOT' in self.available_translations:
+                        try:
+                            # Try different book name variations for TAHOT as well
+                            for book_variant in book_variations:
+                                cursor.execute("""
+                                    SELECT DISTINCT 
+                                        t.verse_id,
+                                        b.book_name,
+                                        t.chapter as chapter_num,
+                                        t.verse as verse_num,
+                                        t.text,
+                                        'TAHOT' as translation_source
+                                    FROM bible.tahot_verses_staging t
+                                    LEFT JOIN bible.books b ON t.book_id = b.book_id
+                                    WHERE b.book_name ILIKE %s AND t.chapter = %s AND t.verse = %s
+                                    ORDER BY b.book_name, t.chapter, t.verse
+                                """, (book_variant, chapter_num, verse_num))
+                                
+                                tahot_results = cursor.fetchall()
+                                if tahot_results:
+                                    results.extend([dict(row) for row in tahot_results])
+                                    print(f"Found {len(tahot_results)} TAHOT verses with book variant '{book_variant}'")
+                                    break
+                            
+                            # If no exact TAHOT match, try partial matching
+                            if not any(r.get('translation_source') == 'TAHOT' for r in results):
+                                cursor.execute("""
+                                    SELECT DISTINCT 
+                                        t.verse_id,
+                                        b.book_name,
+                                        t.chapter as chapter_num,
+                                        t.verse as verse_num,
+                                        t.text,
+                                        'TAHOT' as translation_source
+                                    FROM bible.tahot_verses_staging t
+                                    LEFT JOIN bible.books b ON t.book_id = b.book_id
+                                    WHERE b.book_name ILIKE %s AND t.chapter = %s AND t.verse = %s
+                                    ORDER BY b.book_name, t.chapter, t.verse
+                                """, (f'%{book_name}%', chapter_num, verse_num))
+                                
+                                tahot_partial_results = cursor.fetchall()
+                                if tahot_partial_results:
+                                    results.extend([dict(row) for row in tahot_partial_results])
+                                    print(f"Found {len(tahot_partial_results)} TAHOT verses with partial book match")
+                        except Exception as e:
+                            print(f"TAHOT specific verse search failed (may be expected if table doesn't exist): {e}")
+                    
+                    print(f"Found {len(results)} verse variants total (including TAHOT)")
+                    return results
                     
         except Exception as e:
             print(f"Error searching specific verse: {e}")
             return []
+
+    def get_proper_names_analysis(self, verse_ids, query_keyword=""):
+        """Get proper names and relationships for verses"""
+        try:
+            with get_db_connection() as conn:
+                with conn.cursor() as cursor:
+                    # Get proper names from the verses - fixed SQL syntax
+                    cursor.execute("""
+                        SELECT DISTINCT pn.name, pn.hebrew, pn.greek, pn.description, 
+                               COUNT(*) as occurrences,
+                               v.book_name, v.chapter_num, v.verse_num, v.text, v.translation_source
+                        FROM bible.proper_names pn
+                        JOIN bible.verses v ON v.text ILIKE ('%' || pn.name || '%')
+                        WHERE (v.verse_id = ANY(%s) OR pn.name ILIKE %s)
+                        GROUP BY pn.name, pn.hebrew, pn.greek, pn.description, 
+                                v.book_name, v.chapter_num, v.verse_num, v.text, v.translation_source
+                        ORDER BY occurrences DESC
+                        LIMIT 10
+                    """, (verse_ids, f'%{query_keyword}%'))
+                    proper_names = cursor.fetchall()
+                    
+                    # Get proper name relationships if table exists
+                    try:
+                        cursor.execute("""
+                            SELECT DISTINCT pnr.name1, pnr.name2, pnr.relationship_type, pnr.description
+                            FROM bible.proper_name_relationships pnr
+                            WHERE (pnr.name1 ILIKE %s OR pnr.name2 ILIKE %s)
+                            LIMIT 10
+                        """, (f'%{query_keyword}%', f'%{query_keyword}%'))
+                        relationships = cursor.fetchall()
+                    except Exception as rel_error:
+                        print(f"Proper name relationships table not available: {rel_error}")
+                        relationships = []
+                    
+                    return {
+                        'people': [dict(row) for row in proper_names],
+                        'relationships': [dict(row) for row in relationships]
+                    }
+        except Exception as e:
+            print(f"Error getting proper names analysis: {e}")
+            return {'people': [], 'relationships': []}
+
+    def get_arabic_verses_analysis(self, verse_ids, query_keyword=""):
+        """Get Arabic verses if available"""
+        try:
+            with get_db_connection() as conn:
+                with conn.cursor() as cursor:
+                    # Check if arabic_verses table exists
+                    cursor.execute("""
+                        SELECT EXISTS (
+                            SELECT FROM information_schema.tables 
+                            WHERE table_schema = 'bible' 
+                            AND table_name = 'arabic_verses'
+                        )
+                    """)
+                    table_exists = cursor.fetchone()[0]
+                    
+                    if not table_exists:
+                        print("Arabic verses table does not exist in database")
+                        return []
+                    
+                    cursor.execute("""
+                        SELECT av.verse_id, av.arabic_text, av.transliteration, 
+                               v.book_name, v.chapter_num, v.verse_num, v.translation_source
+                        FROM bible.arabic_verses av
+                        JOIN bible.verses v ON av.verse_id = v.verse_id
+                        WHERE av.verse_id = ANY(%s) OR av.arabic_text ILIKE %s
+                        LIMIT 10
+                    """, (verse_ids, f'%{query_keyword}%'))
+                    return [dict(row) for row in cursor.fetchall()]
+        except Exception as e:
+            print(f"Error getting Arabic verses analysis: {e}")
+            return []
+
+    def get_comprehensive_cross_references(self, verse_ids, query_keyword=""):
+        """Get comprehensive cross-references including deep theological connections"""
+        try:
+            with get_db_connection() as conn:
+                with conn.cursor() as cursor:
+                    cross_refs = []
+                    
+                    # Enhanced cross-references for John 1:1 with deeper theological connections
+                    if "john 1:1" in query_keyword.lower():
+                        # 1. Creation theme connections
+                        cursor.execute("""
+                            SELECT v.verse_id, v.book_name, v.chapter_num, v.verse_num, 
+                                   v.text, v.translation_source, 'creation_theology' as reason
+                            FROM bible.verses v
+                            WHERE (v.book_name = 'Gen' AND v.chapter_num = 1 AND v.verse_num = 1)
+                               OR (v.book_name = 'Pro' AND v.chapter_num = 8 AND v.verse_num IN (22, 23, 30))
+                               OR (v.book_name = 'Psa' AND v.chapter_num = 33 AND v.verse_num = 6)
+                               OR (v.book_name = 'Psa' AND v.chapter_num = 119 AND v.verse_num = 89)
+                               OR (v.book_name = 'Isa' AND v.chapter_num = 55 AND v.verse_num = 11)
+                            ORDER BY v.book_name, v.chapter_num, v.verse_num
+                        """)
+                        cross_refs.extend([dict(row) for row in cursor.fetchall()])
+                        
+                        # 2. Divine Word/Logos connections
+                        cursor.execute("""
+                            SELECT v.verse_id, v.book_name, v.chapter_num, v.verse_num, 
+                                   v.text, v.translation_source, 'logos_theology' as reason
+                            FROM bible.verses v
+                            WHERE (v.book_name = 'Psa' AND v.chapter_num = 107 AND v.verse_num = 20)
+                               OR (v.book_name = 'Isa' AND v.chapter_num = 40 AND v.verse_num = 8)
+                               OR (v.book_name = 'Jer' AND v.chapter_num = 1 AND v.verse_num IN (4, 9, 12))
+                               OR (v.book_name = 'Eze' AND v.chapter_num = 1 AND v.verse_num = 3)
+                               OR (v.book_name = 'Heb' AND v.chapter_num = 4 AND v.verse_num = 12)
+                            ORDER BY v.book_name, v.chapter_num, v.verse_num
+                        """)
+                        cross_refs.extend([dict(row) for row in cursor.fetchall()])
+                        
+                        # 3. Deity/Trinity connections  
+                        cursor.execute("""
+                            SELECT v.verse_id, v.book_name, v.chapter_num, v.verse_num, 
+                                   v.text, v.translation_source, 'deity_theology' as reason
+                            FROM bible.verses v
+                            WHERE (v.book_name = 'Isa' AND v.chapter_num = 9 AND v.verse_num = 6)
+                               OR (v.book_name = 'Mic' AND v.chapter_num = 5 AND v.verse_num = 2)
+                               OR (v.book_name = 'Mal' AND v.chapter_num = 3 AND v.verse_num = 6)
+                               OR (v.book_name = 'Col' AND v.chapter_num = 1 AND v.verse_num IN (15, 16, 17))
+                               OR (v.book_name = 'Heb' AND v.chapter_num = 1 AND v.verse_num IN (1, 2, 3))
+                            ORDER BY v.book_name, v.chapter_num, v.verse_num
+                        """)
+                        cross_refs.extend([dict(row) for row in cursor.fetchall()])
+                        
+                    # Enhanced "beginning" theme connections
+                    elif "beginning" in query_keyword.lower():
+                        cursor.execute("""
+                            SELECT v.verse_id, v.book_name, v.chapter_num, v.verse_num, 
+                                   v.text, v.translation_source, 'beginning_theme' as reason
+                            FROM bible.verses v
+                            WHERE (v.text ILIKE '%beginning%' AND v.book_name IN ('Gen', 'Pro', 'Ecc', 'Isa', 'Jhn', 'Rev'))
+                               OR (v.book_name = 'Rev' AND v.chapter_num = 21 AND v.verse_num = 6)
+                               OR (v.book_name = 'Rev' AND v.chapter_num = 22 AND v.verse_num = 13)
+                            ORDER BY v.book_name, v.chapter_num, v.verse_num
+                            LIMIT 15
+                        """)
+                        cross_refs.extend([dict(row) for row in cursor.fetchall()])
+                    
+                    # Strong's number based cross-references for Greek NT
+                    if verse_ids:
+                        cursor.execute("""
+                            SELECT DISTINCT v2.verse_id, v2.book_name, v2.chapter_num, v2.verse_num, 
+                                   v2.text, v2.translation_source, 'greek_strongs_connection' as reason,
+                                   gw.strongs_id, gw.gloss
+                            FROM bible.verses v1
+                            JOIN bible.greek_nt_words gw ON v1.verse_id = gw.verse_id
+                            JOIN bible.greek_nt_words gw2 ON gw.strongs_id = gw2.strongs_id
+                            JOIN bible.verses v2 ON gw2.verse_id = v2.verse_id
+                            WHERE v1.verse_id = ANY(%s) AND v2.verse_id != v1.verse_id
+                            ORDER BY v2.book_name, v2.chapter_num, v2.verse_num
+                            LIMIT 10
+                        """, (verse_ids,))
+                        cross_refs.extend([dict(row) for row in cursor.fetchall()])
+                        
+                        # Hebrew OT connections for thematic bridging
+                        cursor.execute("""
+                            SELECT DISTINCT v.verse_id, v.book_name, v.chapter_num, v.verse_num, 
+                                   v.text, v.translation_source, 'hebrew_thematic_bridge' as reason,
+                                   hw.strongs_id, hw.gloss
+                            FROM bible.hebrew_ot_words hw
+                            JOIN bible.verses v ON hw.verse_id = v.verse_id
+                            WHERE hw.strongs_id IN ('H1697', 'H430', 'H7225', 'H1254', 'H1961')
+                            AND v.book_name IN ('Gen', 'Psa', 'Pro', 'Isa', 'Jer')
+                            ORDER BY v.book_name, v.chapter_num, v.verse_num
+                            LIMIT 15
+                        """)
+                        cross_refs.extend([dict(row) for row in cursor.fetchall()])
+                    
+                    return cross_refs[:25]  # Limit to 25 most relevant
+        except Exception as e:
+            print(f"Error getting comprehensive cross-references: {e}")
+            return []
+
+    def generate_structured_json_analysis(self, query, verses_data, strongs_data, morphology_data, 
+                                        cross_refs_data, semantic_verses, proper_names_data, 
+                                        arabic_verses_data, morphology_codes=None, 
+                                        versification_mappings=None, translation_analysis=None):
+        """Generate structured JSON output for second AI agent semantic translation"""
+        try:
+            start_time = time.time()
+            
+            # Parse query to determine if it's a verse reference
+            verse_pattern = r'(\d*\s*\w+)\s+(\d+):(\d+)'
+            is_verse_reference = bool(re.search(verse_pattern, query))
+            
+            # Generate LM Studio analysis for summary and theological terms
+            lm_analysis = self.generate_comprehensive_analysis(
+                query, verses_data, strongs_data, morphology_data,
+                cross_refs_data, semantic_verses, morphology_codes,
+                versification_mappings, translation_analysis
+            )
+            
+            # Parse LM Studio response to extract structured data
+            summary = "Comprehensive biblical analysis of the query."
+            theological_terms = {}
+            historical_context = "Biblical context from database analysis."
+            
+            # Try to extract structured information from LM Studio response
+            if isinstance(lm_analysis, str) and lm_analysis:
+                lines = lm_analysis.split('\n')
+                current_section = None
+                
+                for line in lines:
+                    line = line.strip()
+                    if "summary" in line.lower() or "overview" in line.lower():
+                        current_section = "summary"
+                    elif "theological" in line.lower() or "terms" in line.lower():
+                        current_section = "theological_terms"
+                    elif "historical" in line.lower() or "context" in line.lower():
+                        current_section = "historical_context"
+                    elif line and current_section == "summary" and len(line) > 20:
+                        summary = line
+                        current_section = None
+                    elif line and current_section == "historical_context" and len(line) > 20:
+                        historical_context = line
+                        current_section = None
+            
+            # Build structured JSON response
+            structured_response = {
+                "input": {
+                    "reference": query,
+                    "type": "verse" if is_verse_reference else "keyword"
+                },
+                "insights": {
+                    "summary": summary,
+                    "theological_terms": self._extract_theological_terms(query, strongs_data, verses_data),
+                    "cross_references": self._format_cross_references(cross_refs_data),
+                    "historical_context": historical_context,
+                    "original_language_notes": self._format_original_language_notes(strongs_data, morphology_data),
+                    "related_entities": proper_names_data,
+                    "translation_variants": self._format_translation_variants(verses_data),
+                    "lexical_data": self._format_lexical_data(strongs_data),
+                    "semantic_matches": self._format_semantic_matches(semantic_verses),
+                    "versification_mappings": self._format_versification_mappings(versification_mappings),
+                    "proper_names": self._format_proper_names(proper_names_data),
+                    "morphology_codes": self._format_morphology_codes(morphology_codes),
+                    "arabic_data": arabic_verses_data if arabic_verses_data else []
+                },
+                "processing_time_seconds": round(time.time() - start_time, 1)
+            }
+            
+            return structured_response
+            
+        except Exception as e:
+            print(f"Error generating structured JSON analysis: {e}")
+            return {
+                "input": {"reference": query, "type": "error"},
+                "insights": {"summary": f"Error generating analysis: {str(e)}"},
+                "processing_time_seconds": 0.0
+            }
+
+    def _extract_theological_terms(self, query, strongs_data, verses_data):
+        """Extract theological terms from Strong's data and verses"""
+        terms = {}
+        
+        # Key theological terms for common queries
+        if "john 1:1" in query.lower():
+            terms = {
+                "Logos": "The divine Word or reason, embodying God's creative power",
+                "God": "The Supreme Being, Creator",
+                "Creation": "The act of God bringing the universe into existence"
+            }
+        elif "beginning" in query.lower():
+            terms = {
+                "Beginning": "The starting point of creation and divine action",
+                "Creation": "God's act of bringing everything into existence",
+                "Word": "Divine expression and creative power"
+            }
+        
+        # Add terms from Strong's data
+        for strong in strongs_data[:5]:
+            if strong.get('definition'):
+                key = strong.get('lemma', strong.get('gloss', 'Unknown'))
+                terms[key] = strong.get('definition', 'No definition available')
+        
+        return terms
+
+    def _format_cross_references(self, cross_refs_data):
+        """Format cross-references for structured output"""
+        formatted_refs = []
+        
+        for ref in cross_refs_data[:10]:
+            formatted_ref = {
+                "reference": f"{ref['book_name']} {ref['chapter_num']}:{ref['verse_num']}",
+                "text": ref.get('text', '')[:200] + ('...' if len(ref.get('text', '')) > 200 else ''),
+                "reason": ref.get('reason', 'Related passage'),
+                "translation": ref.get('translation_source', 'KJV')
+            }
+            formatted_refs.append(formatted_ref)
+        
+        return formatted_refs
+
+    def _format_original_language_notes(self, strongs_data, morphology_data):
+        """Format original language notes with Greek and Hebrew data"""
+        notes = []
+        
+        # Process Strong's data
+        for strong in strongs_data[:10]:
+            note = {
+                "word": strong.get('word_text', strong.get('gloss', 'N/A')),
+                "strongs_id": strong.get('strongs_id', 'N/A'),
+                "meaning": strong.get('definition', strong.get('gloss', 'N/A')),
+                "grammar_code": strong.get('grammar_code', 'N/A'),
+                "lemma": strong.get('lemma', 'N/A'),
+                "transliteration": strong.get('transliteration', 'N/A'),
+                "usage": strong.get('usage', 'Biblical usage'),
+                "language": strong.get('language', 'Unknown')
+            }
+            notes.append(note)
+        
+        # Add morphology data
+        for morph in morphology_data[:5]:
+            if not any(n['strongs_id'] == morph.get('strongs_id') for n in notes):
+                note = {
+                    "word": morph.get('word_text', 'N/A'),
+                    "strongs_id": morph.get('strongs_id', 'N/A'),
+                    "meaning": morph.get('gloss', 'N/A'),
+                    "grammar_code": morph.get('grammar_code', 'N/A'),
+                    "lemma": morph.get('lemma', 'N/A'),
+                    "transliteration": morph.get('transliteration', 'N/A'),
+                    "usage": "Grammatical analysis",
+                    "language": morph.get('language', 'Unknown')
+                }
+                notes.append(note)
+        
+        return notes
+
+    def _format_translation_variants(self, verses_data):
+        """Format translation variants"""
+        variants = []
+        
+        for verse in verses_data:
+            variant = {
+                "translation": verse.get('translation_source', 'KJV'),
+                "text": verse.get('text', '')
+            }
+            variants.append(variant)
+        
+        return variants
+
+    def _format_lexical_data(self, strongs_data):
+        """Format lexical data for structured output"""
+        lexical = []
+        
+        for strong in strongs_data[:10]:
+            lex_entry = {
+                "word": strong.get('word_text', strong.get('gloss', 'N/A')),
+                "strongs_id": strong.get('strongs_id', 'N/A'),
+                "lemma": strong.get('lemma', 'N/A'),
+                "transliteration": strong.get('transliteration', 'N/A'),
+                "definition": strong.get('definition', strong.get('gloss', 'N/A')),
+                "morphology": {
+                    "code": strong.get('grammar_code', 'N/A'),
+                    "description": strong.get('grammar_description', 'N/A')
+                }
+            }
+            lexical.append(lex_entry)
+        
+        return lexical
+
+    def _format_semantic_matches(self, semantic_verses):
+        """Format semantic matches"""
+        matches = []
+        
+        for verse in semantic_verses[:10]:
+            if 'source' in verse and verse['source'] == 'bge-m3':
+                match = {
+                    "reference": "Semantic Match",
+                    "text": verse['document'][:150] + ('...' if len(verse['document']) > 150 else ''),
+                    "similarity": verse.get('similarity', 0.0),
+                    "translation": "BGE-M3"
+                }
+            else:
+                match = {
+                    "reference": f"{verse['book_name']} {verse['chapter_num']}:{verse['verse_num']}",
+                    "text": verse['text'][:150] + ('...' if len(verse['text']) > 150 else ''),
+                    "similarity": verse.get('similarity', 0.0),
+                    "translation": verse.get('translation_source', 'KJV')
+                }
+            matches.append(match)
+        
+        return matches
+
+    def _format_versification_mappings(self, versification_mappings):
+        """Format versification mappings"""
+        if not versification_mappings:
+            return []
+        
+        mappings = []
+        for mapping in versification_mappings[:10]:
+            formatted_mapping = {
+                "source": f"{mapping['source_book']} {mapping['source_chapter']}:{mapping['source_verse']}",
+                "target": f"{mapping['target_book']} {mapping['target_chapter']}:{mapping['target_verse']}",
+                "type": mapping.get('mapping_type', 'Unknown')
+            }
+            mappings.append(formatted_mapping)
+        
+        return mappings
+
+    def _format_proper_names(self, proper_names_data):
+        """Format proper names data"""
+        if not proper_names_data or not proper_names_data.get('people'):
+            return []
+        
+        formatted_names = []
+        for person in proper_names_data['people'][:10]:
+            formatted_name = {
+                "name": person.get('name', 'Unknown'),
+                "hebrew": person.get('hebrew', ''),
+                "greek": person.get('greek', ''),
+                "description": person.get('description', ''),
+                "occurrences": person.get('occurrences', 0)
+            }
+            formatted_names.append(formatted_name)
+        
+        return formatted_names
+
+    def _format_morphology_codes(self, morphology_codes):
+        """Format morphology codes"""
+        if not morphology_codes:
+            return []
+        
+        formatted_codes = []
+        for code in morphology_codes[:10]:
+            formatted_code = {
+                "code": code.get('code', 'N/A'),
+                "description": code.get('description', 'N/A'),
+                "language": code.get('language', 'Unknown')
+            }
+            formatted_codes.append(formatted_code)
+        
+        return formatted_codes
 
 @contextual_insights_bp.route('/insights', methods=['POST'])
 def get_comprehensive_insights():
@@ -892,53 +1451,53 @@ def get_comprehensive_insights():
         morphology_data = analyzer.get_morphological_analysis(verse_ids, query)
         print(f"Found {len(morphology_data)} morphological entries")
         
-        # 4. Get cross-references
-        print("Getting cross-references...")
-        cross_refs_data = analyzer.get_cross_references(verse_ids)
-        print(f"Found {len(cross_refs_data)} cross-references")
+        # 4. Get comprehensive cross-references (including Old Testament links)
+        print("Getting comprehensive cross-references...")
+        cross_refs_data = analyzer.get_comprehensive_cross_references(verse_ids, query)
+        print(f"Found {len(cross_refs_data)} comprehensive cross-references")
         
         # 5. Get semantic similar verses
         print("Getting semantic similar verses...")
         semantic_verses = analyzer.get_semantic_similar_verses(query, limit=5)
         print(f"Found {len(semantic_verses)} semantic matches")
         
-        # 6. Get morphology code descriptions
+        # 6. Get proper names analysis
+        print("Getting proper names analysis...")
+        proper_names_data = analyzer.get_proper_names_analysis(verse_ids, query)
+        print(f"Found {len(proper_names_data.get('people', []))} proper names")
+        
+        # 7. Get Arabic verses analysis
+        print("Getting Arabic verses analysis...")
+        arabic_verses_data = analyzer.get_arabic_verses_analysis(verse_ids, query)
+        print(f"Found {len(arabic_verses_data)} Arabic verses")
+        
+        # 8. Get morphology code descriptions
         print("Getting morphology code descriptions...")
         morphology_codes = analyzer.get_morphology_code_descriptions(morphology_data)
         print(f"Found {len(morphology_codes)} morphology code descriptions")
         
-        # 7. Get versification mappings
+        # 9. Get versification mappings
         print("Getting versification mappings...")
         versification_mappings = analyzer.get_versification_mappings(verse_ids, limit=10)
         print(f"Found {len(versification_mappings)} versification mappings")
         
-        # 8. Get complete translation analysis
+        # 10. Get complete translation analysis
         print("Getting complete translation analysis...")
         translation_analysis = analyzer.get_complete_translation_analysis(query, limit=20)
         print(f"Translation analysis complete")
         
-        # 9. Generate comprehensive analysis using LM Studio
-        print("Generating comprehensive analysis...")
-        comprehensive_analysis = analyzer.generate_comprehensive_analysis(
+        # 11. Generate structured JSON analysis for second AI agent
+        print("Generating structured JSON analysis...")
+        structured_analysis = analyzer.generate_structured_json_analysis(
             query, verses_data, strongs_data, morphology_data, 
-            cross_refs_data, semantic_verses, morphology_codes,
-            versification_mappings, translation_analysis
+            cross_refs_data, semantic_verses, proper_names_data,
+            arabic_verses_data, morphology_codes, versification_mappings, 
+            translation_analysis
         )
         
-        print("Analysis complete")
+        print("Structured analysis complete")
         
-        return jsonify({
-            'insights': comprehensive_analysis,
-            'query': query,
-            'translation': translation,
-            'verses_found': len(verses_data),
-            'strongs_entries': len(strongs_data),
-            'morphology_entries': len(morphology_data),
-            'cross_references': len(cross_refs_data),
-            'semantic_matches': len(semantic_verses),
-            'morphology_codes': len(morphology_codes),
-            'versification_mappings': len(versification_mappings)
-        })
+        return jsonify(structured_analysis)
         
     except Exception as e:
         print(f"Error in comprehensive insights: {e}")

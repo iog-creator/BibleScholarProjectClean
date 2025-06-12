@@ -1,16 +1,14 @@
 {
   "mcpServers": {
-    "bible-scholar-mcp": {
+    "bible-scholar-v2": {
       "command": "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\BSPclean\\Scripts\\python.exe",
       "args": [
-        "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\scripts\\mcp_server_refactored.py",
-        "--mcp"
+        "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace\\scripts\\mcp_server_bible_scholar.py"
       ],
       "cwd": "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace",
       "env": {
-        "MCP_MODE": "true",
         "PYTHONPATH": "C:\\Users\\mccoy\\Documents\\Projects\\Projects\\CursorMCPWorkspace",
-        "PYTHONIOENCODING": "utf-8"
+        "MCP_DEBUG": "1"
       }
     }
   }

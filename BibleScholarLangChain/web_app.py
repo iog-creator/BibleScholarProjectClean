@@ -36,7 +36,7 @@ else:
     cache = None
 
 # Configuration
-API_BASE_URL = os.getenv('API_BASE_URL', 'http://localhost:5000')
+API_BASE_URL = os.getenv('API_BASE_URL', 'http://localhost:5200')
 LM_STUDIO_URL = 'http://localhost:1234/v1'
 
 # --- LOGGING CONFIGURATION ---
@@ -80,7 +80,7 @@ def reload_env():
     """Reload environment variables from .env file"""
     load_dotenv(dotenv_path='.env', override=True)
     global API_BASE_URL, LM_STUDIO_URL
-    API_BASE_URL = os.getenv('API_BASE_URL', 'http://localhost:5000')
+    API_BASE_URL = os.getenv('API_BASE_URL', 'http://localhost:5200')
     LM_STUDIO_URL = 'http://localhost:1234/v1'
 
 def get_model_settings():
@@ -152,7 +152,7 @@ def proxy_api_request(endpoint, params=None, json_data=None, method='GET', timeo
     except requests.exceptions.Timeout:
         return {'error': f'API request timed out after {timeout}s'}, 504
     except requests.exceptions.ConnectionError:
-        return {'error': 'Cannot connect to API server. Make sure it is running on port 5000.'}, 503
+        return {'error': 'Cannot connect to API server. Make sure it is running on port 5200.'}, 503
     except Exception as e:
         return {'error': f'API request failed: {str(e)}'}, 500
 
@@ -474,7 +474,7 @@ if __name__ == '__main__':
         print("Starting Web UI Server on port 5002...")
         print(f"Proxying API requests to: {API_BASE_URL}")
         print(f"LM Studio integration: {LM_STUDIO_URL}")
-        app.run(host='0.0.0.0', port=5002, debug=True, use_reloader=False)
+        app.run(host='0.0.0.0', port=5300, debug=True, use_reloader=False)
     except Exception as e:
         logger.error(f"Failed to start web application: {e}")
         raise 

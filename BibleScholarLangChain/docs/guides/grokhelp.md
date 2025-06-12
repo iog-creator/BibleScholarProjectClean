@@ -1,353 +1,164 @@
-Below is the updated `grokhelp.md` that comprehensively documents the setup process for `BibleScholarLangChain` as implemented in the current `update_setup_notebook.py` (January 2025). This document serves as a reference for Cursor, addressing requirements: integrating LangChain, reusing `bible.verse_embeddings`, ensuring `psycopg3` compatibility, incorporating `BibleStudyProjectv2` scripts, and adding the modular tutor system. It documents the RESOLVED issues (LM Studio integration, UI functionality on port 5002, complete endpoint testing), emphasizes forward slashes, and mentions DSPy only as a future plan. The document is structured for clarity, aligns with `mcp_rules.md`, and provides actionable guidance for Cursor to implement or verify the setup.
+### Key Points
+- You’ve noted that John 3:16, being a New Testament verse, lacks a direct Hebrew original in `bible_db` (per `DATABASE_SCHEMA.md`), as it’s primarily in Greek (`bible.greek_nt_words`). You want a verse with cross-references to the Old Testament, which would involve Hebrew data (`bible.hebrew_ot_words`, `bible.hebrew_entries`).
+- You’ve suggested John 1:1 as an alternative, which is suitable since it’s a New Testament verse (Greek) with theological ties to Old Testament concepts (e.g., “In the beginning” echoes Genesis 1:1 in Hebrew), enabling cross-references.
+- The Contextual Insights API (`contextual_insights_api.py`) must produce a comprehensive JSON output from all `bible_db` tables, treating KJV, ASV, YLT, and TAHOT equally (`mcp_rules.md`), for use by a second AI agent performing on-the-fly semantic translation from original languages (Greek/Hebrew) and answering broader questions.
+- The response should include non-empty data, with cross-references linking John 1:1 to Old Testament verses, supporting the Star Trek-like Bible scholar vision via the MCP server (`mcp_universal_operations.py`).
+- Instructions for Cursor AI remain concise, relying on its codebase knowledge, with an updated example for John 1:1.
 
----
+### Instructions for Cursor AI
+Cursor, update the Contextual Insights API (`BibleScholarLangChain/src/api/contextual_insights_api.py`) to generate a comprehensive JSON output for “John 1:1”, aggregating non-empty data from all `bible_db` tables (`bible.verses`, `bible.hebrew_ot_words`, `bible.greek_nt_words`, `bible.hebrew_entries`, `bible.greek_entries`, `bible.verse_embeddings`, `bible.versification_mappings`, `bible.proper_names`, `bible.hebrew_morphology_codes`, `bible.greek_morphology_codes`, `bible.arabic_verses`). Ensure cross-references link to Old Testament verses (e.g., Genesis 1:1) and treat KJV, ASV, YLT, and TAHOT equally (`mcp_rules.md`). The JSON will support a second AI agent for on-the-fly semantic translation from Greek/Hebrew and general question answering. Use the codebase to fix issues (e.g., incomplete queries, JSON errors from June 7, 2025). Below are the tasks and an example response:
 
-# Grok Help Guide for BibleScholarLangChain Setup
+1. **Diagnose the Issue**:
+   - Check `contextual_insights_api.py` (e.g., `generate_comprehensive_analysis`, `search_specific_verse`) for missing queries to tables like `bible.hebrew_ot_words`, `bible.proper_names`, or `bible.versification_mappings`.
+   - Review `logs/mcp_operations/successful_operations.jsonl` and `logs/contextual_insights.log` for failures since June 10, 2025 (`recent_changes.json`).
+   - Ensure `quick_vector_search` and `quick_lexicon_search` (`mcp_tools.py`) query all translations equally.
 
-## Purpose
-This document guides the setup of the `BibleScholarLangChain` project at `C:/Users/mccoy/Documents/Projects/Projects/CursorMCPWorkspace/BibleScholarLangChain`, using `setup.ipynb` as the single source of truth. It rebuilds a comprehensive Bible study platform, integrating LangChain for semantic search, reusing existing `bible.verse_embeddings`, and incorporating updated scripts from `BibleScholarProjectv2` (`web_app.py`, `vector_search_api.py`, `lexicon_api.py`, `search_api.py`). The setup ensures compatibility with `psycopg3`, standardizes paths with forward slashes, and addresses issues like LM Studio call failures and non-functional UI on port 5002. DSPy integration is planned for future enhancements but excluded from the current setup.
+2. **Enhance Data Aggregation**:
+   - Update `contextual_insights_api.py` to query all `bible_db` tables for “John 1:1”, ensuring non-empty results for:
+     - Verses and translations (`bible.verses`, `bible.translations`).
+     - Greek words, lexicon, morphology (`bible.greek_nt_words`, `bible.greek_entries`, `bible.greek_morphology_codes`).
+     - Hebrew cross-references (e.g., Genesis 1:1 in `bible.hebrew_ot_words`, `bible.hebrew_entries`, `bible.hebrew_morphology_codes`).
+     - Semantic matches (`bible.verse_embeddings`).
+     - Cross-references and versification (`bible.versification_mappings`).
+     - Proper names and relationships (`bible.proper_names`, `bible.proper_name_relationships`).
+     - Arabic data, if relevant (`bible.arabic_verses`).
+   - Structure JSON for the second agent, including all fields from `API_REFERENCE.md` (`summary`, `theological_terms`, etc.), with cross-references to Old Testament verses.
+   - Enforce database-only answers (`README.md`), returning “Sorry, I can only answer using the Bible database...” if no data is found.
 
-## Project Overview
-`BibleScholarLangChain` provides:
-1. **API Server** (port 5000):
-   - Contextual insights via `/api/contextual_insights/insights` using LM Studio (`bge-m3`, `meta-llama-3.1-8b-instruct`).
-   - Vector search via `/api/vector_search/vector-search` using `bible.verse_embeddings`.
-   - Lexicon searches for Hebrew terms via `/api/lexicon/search`.
-   - Text searches across translations via `/api/search`.
-   - Cross-language term mappings via `/api/cross_language/csv` (placeholder).
-2. **Web UI Server** (port 5002):
-   - Study dashboard at `/study_dashboard`.
-   - Search interface at `/search` for verse and lexicon queries.
-   - Health checks at `/health`.
-3. **Core Features**:
-   - `psycopg3` for database access with `dict_row` factory.
-   - LangChain with `PGVector` for semantic search.
-   - Modular tutor system (`bible_database_tutor.py`) for CLI-based queries.
-   - Forward slashes for cross-platform compatibility.
-   - MCP server enforcement via `mcp_rules.md`.
+3. **Improve LM Studio Parsing**:
+   - Modify `generate_comprehensive_analysis` to parse LM Studio responses into JSON, ensuring all fields are populated with non-empty data.
+   - Add error handling for malformed responses (June 7, 2025).
+   - Include rich Greek/Hebrew data for semantic translation by the second agent.
 
-## Prerequisites
-- **Python**: 3.11.x at `C:/Python311`.
-- **PostgreSQL**: Running on `localhost:5432` with `bible_db` and `pgvector` extension enabled; `bible.verse_embeddings` table populated (1024 dimensions, `bge-m3`).
-- **LM Studio**: Running on `http://localhost:1234/v1` with `bge-m3` and `meta-llama-3.1-8b-instruct` models loaded.
-- **Cursor IDE**: Configured to use `C:/Users/mccoy/.../BSPclean/Scripts/python.exe` kernel.
-- **MCP Server**: Running at `C:/Users/mccoy/.../scripts/mcp_server.py` on port 8000.
-- **Virtual Environment**: `BSPclean` at `C:/Users/mccoy/.../BSPclean`.
+4. **Support Broader Questions**:
+   - Ensure the API handles general queries (e.g., “beginning”, “What is the Word?”) using `quick_vector_search` and `quick_lexicon_search`.
 
-## Key Issues Addressed
-1. **LM Studio Call Failures**:
-   - Issue: API calls to LM Studio (`http://localhost:1234/v1`) fail, as reported in logs (June 7, 2025, 10:15 AM PDT).
-   - Fix: Added health check in Step 3 to verify LM Studio models before vector store setup; updated `LMStudioEmbedding` and `LMStudioLLM` with correct endpoints (`/embeddings`, `/chat/completions`).
-2. **Non-Functional UI**:
-   - Issue: UI on port 5002 is up but not fully functional (June 7, 2025, 10:15 AM PDT).
-   - Fix: Enhanced `dashboard.js` in Step 5 for API response handling; ensured `search.html` integrates with `/api/search` and `/api/lexicon/search`.
-3. **Psycopg2 Conflicts**:
-   - Issue: `v2` scripts (`web_app.py`, `search_api.py`) used `psycopg2`, conflicting with LangChain's `psycopg3` requirement.
-   - Fix: Updated scripts in Step 4 to use `psycopg3` with `dict_row` factory; Step 1 uninstalls `psycopg2`.
-4. **Redundant Vector Store**:
-   - Issue: Step 3 created `langchain_pg_embedding`, ignoring `bible.verse_embeddings` (1024 dimensions, per `bible_db_2025-05-22_083002_backup.sql`).
-   - Fix: Modified Step 3 to reuse `bible.verse_embeddings` directly.
-5. **Incomplete Endpoint Testing**:
-   - Issue: Step 5 tested only `/api/contextual_insights/insights`, omitting other endpoints.
-   - Fix: Expanded Step 6 to test all endpoints (`/api/search`, `/api/lexicon/search`, etc.).
-6. **Modular Tutor Integration**:
-   - Issue: Lacked a modular tutor system as discussed (June 7, 2025).
-   - Fix: Added Step 8 for `bible_scholar_tutor.py`, integrating with `secure_connection.py` and `LMStudioEmbedding`.
+5. **Test and Validate**:
+   - Update `test_bible_scholar_mcp.py` to test `/api/contextual_insights/insights` with “John 1:1” (no translation preference), “beginning”, and “What is the Word?”.
+   - Verify results in `logs/mcp_operations/successful_operations.jsonl`.
 
-## Setup Process Overview
-The `setup.ipynb` notebook, generated by `update_setup_notebook.py`, consists of eight steps executed sequentially in Cursor IDE with the `BSPclean` kernel. Each step addresses specific components, with tests to verify functionality.
+6. **Update Notebook**:
+   - Run `update_setup_notebook.py` to document changes in `setup.ipynb`.
 
-### Step 0: Audit MCP Cleanup Scripts (Optional)
-- **Purpose**: Scans MCP scripts (`C:/Users/mccoy/.../scripts/*.py`) for destructive commands (`rmtree`, `remove`, `delete`) to prevent accidental deletion of critical directories (`BSPclean`, `BibleScholarLangChain`).
-- **Implementation**: Lists scripts, checks for cleanup commands, logs to `setup.log`.
-- **Test**: Verify output lists scripts (e.g., `mcp_server.py`) and logs `Audited MCP cleanup scripts`.
-
-### Step 1: Reset Project and Virtual Environment
-- **Purpose**: Initializes `BSPclean` virtual environment, uninstalls `psycopg2`, installs dependencies, and configures Cursor IDE.
-- **Implementation**:
-  - Creates `BSPclean` at `C:/Users/mccoy/.../BSPclean` if not exists.
-  - Uninstalls `psycopg2` and `psycopg2-binary`.
-  - Writes `requirements.txt` with `psycopg3==3.1.8`, `langchain==0.2.16`, etc.
-  - Installs dependencies and configures `.cursor/settings.json`.
-- **Test**: Verify `Python: C:/Users/mccoy/.../BSPclean/Scripts/python.exe`, versions (`psycopg==3.1.8`), and `GOOD: psycopg2 is not importable`.
-
-### Step 2: Create Minimal File Structure and Configuration
-- **Purpose**: Sets up project directories, configuration files, and database connection modules.
-- **Implementation**:
-  - Creates directories: `src/api`, `src/database`, `src/utils`, `scripts`, `config`, `templates`, `static/js`, `static/css`.
-  - Writes `config.json` with `lm_studio_url: http://localhost:1234/v1`, `.env` with `LM_STUDIO_EMBEDDINGS_URL=http://localhost:1234/v1/embeddings`.
-  - Creates `db_config.py`, `database.py` (SQLAlchemy), `secure_connection.py` (`psycopg3`).
-  - Copies UI files from `BibleScholarProjectv2` or creates placeholders.
-- **Test**: Verify file sizes (e.g., `config.json ~200 bytes`), database connection (`SQLAlchemy database connection successful`).
-
-### Step 3: Set Up Vector Store with LangChain
-- **Purpose**: Configures `PGVector` to use `bible.verse_embeddings` for semantic search, with LM Studio health check.
-- **Implementation**:
-  - Writes `load_bible_data.py` with `LMStudioEmbedding` class, checking `bible.verse_embeddings` existence.
-  - If table exists, uses it; otherwise, loads 100 verses (KJV, ASV) with `bge-m3` embeddings.
-  - Adds LM Studio health check: `curl http://localhost:1234/v1/models`.
-- **Test**: Verify `Using existing bible.verse_embeddings` or `Loaded 100 verses`, non-zero count in `SELECT COUNT(*) FROM bible.verse_embeddings`.
-
-### Step 4: Set Up API Endpoints
-- **Purpose**: Creates Flask API server (port 5000) with blueprints for contextual insights, vector search, lexicon, search, and cross-language terms.
-- **Implementation**:
-  - Writes `api_app.py` to register blueprints and serve `/study_dashboard`.
-  - Creates `contextual_insights_api.py` with `LMStudioLLM` and `LMStudioEmbedding` for `/api/contextual_insights/insights`.
-  - Ports `v2` scripts: `vector_search_api.py`, `lexicon_api.py`, `search_api.py`, `cross_language_api.py` (placeholder), updating to `psycopg3`.
-  - Ensures `use_reloader=False` in `app.run()`.
-- **Test**: Verify `Created [file].py`, health check: `{'status': 'ok', 'server': 'Contextual Insights API'}`.
-
-### Step 4.1: Create Web Application
-- **Purpose**: Sets up Flask web UI server (port 5002) with search and dashboard interfaces.
-- **Implementation**:
-  - Writes `web_app.py` from `v2`, integrating with API endpoints (`/api/search`, etc.), using `psycopg3`.
-  - Configures routes for `/`, `/search`, `/study_dashboard`, `/health`.
-  - Ensures `use_reloader=False`.
-- **Test**: Verify `Created web_app.py`, `{'status': 'OK', 'server': 'Web UI Server (port 5002)'}`.
-
-### Step 5: Create UI Templates and Static Files
-- **Purpose**: Generates templates and assets for the web UI.
-- **Implementation**:
-  - Creates `search.html` for search interface, integrating with `/api/search` and `/api/lexicon/search`.
-  - Writes `dashboard.css` for styling, `dashboard.js` with enhanced API response handling (e.g., `fetch('/api/search')`).
-- **Test**: Verify `Created templates/search.html`, `static/css/dashboard.css`, `static/js/dashboard.js`.
-
-### Step 6: Validate Functionality and UI
-- **Purpose**: Tests all API endpoints and UI functionality.
-- **Implementation**:
-  - Starts API (5000) and web UI (5002) servers.
-  - Tests endpoints: `/api/contextual_insights/insights`, `/api/vector_search/vector-search`, `/api/lexicon/search`, `/api/search`, `/api/cross_language/csv`.
-  - Verifies ports 5000, 5002, 1234 (LM Studio).
-- **Test**: Verify JSON responses, UI accessibility at `http://localhost:5002/study_dashboard` and `/search`.
-
-### Step 7: Create Test Script
-- **Purpose**: Generates a system test script and `start_servers.bat` for reliable server management.
-- **Implementation**:
-  - Writes `test_system.py` to test all endpoints and servers.
-  - Creates `start_servers.bat` to kill existing processes and start servers sequentially.
-- **Test**: Verify `Created scripts/test_system.py`, `Created start_servers.bat`, test output includes `Success: [endpoint] - Status 200`.
-
-### Step 8: Update MCP Rules
-- **Purpose**: Ensures `mcp_rules.md` reflects all files and standards.
-- **Implementation**:
-  - Updates `mcp_rules.md` to list required files, enforce `psycopg3`, forward slashes, and `use_reloader=False`.
-  - Includes `start_servers.bat` and `test_system.py`.
-- **Test**: Verify `Updated mcp_rules.md`, log contains `Updated MCP rules`.
-
-## Execution Plan
-1. **Apply Changes**:
-   - Edit `grokhelp.md` to reflect this content.
-   - Update `update_setup_notebook.py` to include LM Studio health check (Step 3), comprehensive endpoint tests (Step 6), enhanced `dashboard.js` (Step 5), and `start_servers.bat` (Step 7).
-   - Run: `python update_setup_notebook.py`.
-2. **Run Notebook**:
-   - Open `setup.ipynb` in Cursor IDE with `BSPclean` kernel.
-   - Run cells 0–8, verify outputs.
-3. **Verify Results**:
-   - Confirm `psycopg3` usage (`3.1.8`) in Steps 1, 6.
-   - Verify `bible.verse_embeddings` usage (Step 3).
-   - Test endpoints: `curl http://localhost:5000/api/[endpoint]` (Step 6).
-   - Check UI: `http://localhost:5002/study_dashboard`, `/search` (Step 6).
-   - Run `start_servers.bat`, verify servers on ports 5000, 5002.
-   - Check logs: `C:/Users/mccoy/.../logs/setup.log`.
-
-## Overlooked Issues and Improvements
-1. **LM Studio Health Check**:
-   - **Issue**: No validation of LM Studio before vector store setup, causing failures.
-   - **Fix**: Added `curl http://localhost:1234/v1/models` in Step 3.
-2. **Comprehensive Endpoint Testing**:
-   - **Issue**: Step 5 missed testing `/api/search`, `/api/lexicon/search`, etc.
-   - **Fix**: Expanded Step 6 to include all endpoints.
-3. **UI Responsiveness**:
-   - **Issue**: UI on port 5002 lacks dynamic API integration.
-   - **Fix**: Enhanced `dashboard.js` in Step 5 for `fetch` calls.
-4. **Server Management**:
-   - **Issue**: No standardized server startup script.
-   - **Fix**: Added `start_servers.bat` in Step 7.
-5. **Cleanup Protection**:
-   - **Issue**: Risk of MCP scripts deleting critical directories.
-   - **Fix**: Strengthened Step 0 audit and `mcp_rules.md` protections.
-
-## Notes
-- **DSPy**: Excluded, only planned for future semantic search enhancements.
-- **BGE-M3 Reranker**: Not used; `bge-m3` handles embeddings for `bible.verse_embeddings`.
-- **BibleReferenceParser**: If needed, provide details for integration.
-- **v2 Scripts**: Reused `web_app.py`, `vector_search_api.py`, `lexicon_api.py`, `search_api.py` with `psycopg3` and forward slashes.
-
-## Future Enhancements
-- DSPy integration for advanced semantic search.
-- Extended API endpoints for deeper Bible study features.
-- UI improvements with enhanced dashboard and search interfaces.
-
-## Reference for Cursor
-- **Primary Sources**: `update_setup_notebook.py`, `mcp_rules.md`, `setup.ipynb`, `bible_db_2025-05-22_083002_backup.sql`.
-- **Standards**: Use forward slashes, `psycopg3`, `use_reloader=False`, absolute imports.
-- **Tests**: Verify LM Studio, API endpoints, UI, and logs after each step.
-- **Execution**: Run `update_setup_notebook.py`, then `setup.ipynb` in Cursor IDE.
-
-**Confirm**: Apply this content to `grokhelp.md` and proceed with `update_setup_notebook.py` edits as guided in the previous response. Provide feedback if additional details (e.g., LM Studio logs, UI issues) are needed.
-
---- 
-
-This verbose ensures Cursor has a clear, detailed reference while maintaining alignment with your project goals and standards. 
-
-# Bible Scholar LangChain Project - Status Update
-
-## Current Status ✅
-
-### ✅ LM Studio Integration
-- **Status**: ✅ **FUNCTIONAL** - LM Studio connection successful
-- **URL**: `http://localhost:1234/v1`
-- **Features**: Direct chat completions, model listing, fallback support
-- **Test Endpoint**: `/test-lm-studio` - Interactive testing interface
-
-### ✅ Web Application
-- **Status**: ✅ **RUNNING** - Enhanced web app on port 5002
-- **Features**: 
-  - LM Studio integration with fallback
-  - Contextual insights with AI analysis
-  - Bible Scholar Tutor interface
-  - Enhanced search with 30s timeout
-  - Comprehensive error handling
-- **Templates**: All essential templates created (base, test_lm_studio, contextual_insights, tutor, error)
-
-### ⚠️ API Server
-- **Status**: ⚠️ **NOT ACCESSIBLE** - API server on port 5000 not running
-- **Impact**: Web app uses LM Studio fallback for insights
-- **Action Needed**: Start API server for full functionality
-
-### ✅ Database & Search
-- **Status**: ✅ **OPTIMIZED** - Indexes added, 30s timeout implemented
-- **Performance**: Search timeouts resolved with GIN/ILIKE indexes
-- **Vector Search**: Available when API server is running
-
-## Key Improvements Made
-
-### 1. Enhanced Web Application (`web_app.py`)
-- **LM Studio Integration**: Direct connection with fallback support
-- **Advanced Logging**: Comprehensive error tracking and debugging
-- **Model Settings**: Dynamic configuration management
-- **Health Monitoring**: Real-time status of all services
-- **Error Handling**: Graceful degradation when services unavailable
-
-### 2. New Features Added
-- **LM Studio Test Page**: `/test-lm-studio` - Interactive connection testing
-- **Contextual Insights**: `/contextual-insights` - AI-powered Bible analysis
-- **Bible Tutor**: `/tutor` - Interactive learning interface
-- **Direct LM Studio API**: `/api/lm-studio/direct` - Direct query endpoint
-
-### 3. Template System
-- **Base Template**: Modern Bootstrap 5 UI with navigation
-- **Responsive Design**: Mobile-friendly interface
-- **Error Pages**: User-friendly error handling
-- **Interactive Elements**: JavaScript enhancements
-
-## Current Architecture
-
-```
-BibleScholarLangChain/
-├── web_app.py              # Enhanced web server (port 5002) ✅
-├── templates/              # Complete template system ✅
-│   ├── base.html          # Navigation and layout
-│   ├── test_lm_studio.html # LM Studio testing
-│   ├── contextual_insights.html # AI analysis
-│   ├── tutor.html         # Interactive tutor
-│   └── error.html         # Error handling
-├── bible_scholar_tutor.py  # CLI tutor module ✅
-├── .env                   # Configuration ✅
-└── logs/                  # Application logs ✅
+**Example Response** (for “John 1:1”, no translation preference, with OT cross-references):
+```json
+{
+  "input": {
+    "reference": "John 1:1",
+    "type": "verse"
+  },
+  "insights": {
+    "summary": "John 1:1 declares the eternal existence of the Word (Logos), identified with God, echoing creation themes from Genesis 1:1.",
+    "theological_terms": {
+      "Logos": "The divine Word or reason, embodying God’s creative power",
+      "God": "The Supreme Being, Creator",
+      "Creation": "The act of God bringing the universe into existence"
+    },
+    "cross_references": [
+      {
+        "reference": "Genesis 1:1",
+        "text": "In the beginning God created the heaven and the earth.",
+        "reason": "Shares 'In the beginning' theme, linking creation to the Word.",
+        "translation": "KJV"
+      },
+      {
+        "reference": "Proverbs 8:22",
+        "text": "The LORD possessed me in the beginning of his way...",
+        "reason": "Personifies Wisdom, paralleling the Logos concept.",
+        "translation": "ASV"
+      }
+    ],
+    "historical_context": "Written ~90-110 AD, John’s Gospel addresses early Christians, emphasizing Jesus as the divine Logos, resonant with Jewish and Hellenistic thought.",
+    "original_language_notes": [
+      {
+        "word": "λόγος",
+        "strongs_id": "G3056",
+        "meaning": "Word, reason",
+        "grammar_code": "N-NSM",
+        "lemma": "λόγος",
+        "transliteration": "logos",
+        "usage": "Divine expression or agent of creation"
+      },
+      {
+        "word": "θεός",
+        "strongs_id": "G2316",
+        "meaning": "God",
+        "grammar_code": "N-NSM",
+        "lemma": "θεός",
+        "transliteration": "theos",
+        "usage": "Supreme deity"
+      },
+      {
+        "word": "בְּרֵאשִׁית",
+        "strongs_id": "H7225",
+        "meaning": "In the beginning",
+        "grammar_code": "N-FS",
+        "lemma": "רֵאשִׁית",
+        "transliteration": "bereshit",
+        "usage": "Temporal beginning (from Genesis 1:1)",
+        "translation": "TAHOT"
+      }
+    ],
+    "related_entities": {
+      "people": [
+        {"name": "Jesus Christ", "description": "The Word incarnate", "occurrences": 847},
+        {"name": "God", "description": "Creator and Supreme Being", "occurrences": 2600}
+      ],
+      "places": [],
+      "relationships": [
+        {"name1": "Jesus Christ", "name2": "God", "type": "Word-God identity"}
+      ]
+    },
+    "translation_variants": [
+      {"translation": "KJV", "text": "In the beginning was the Word, and the Word was with God..."},
+      {"translation": "ASV", "text": "In the beginning was the Word, and the Word was with God..."},
+      {"translation": "YLT", "text": "In the beginning was the Word, and the Word was with God..."},
+      {"translation": "TAHOT", "text": "[Hebrew text from tahot_verses_staging, if applicable]"}
+    ],
+    "lexical_data": [
+      {
+        "word": "λόγος",
+        "strongs_id": "G3056",
+        "lemma": "λόγος",
+        "transliteration": "logos",
+        "definition": "Word, reason",
+        "morphology": {"code": "N-NSM", "description": "Noun, Nominative Singular Masculine"}
+      },
+      {
+        "word": "בְּרֵאשִׁית",
+        "strongs_id": "H7225",
+        "lemma": "רֵאשִׁית",
+        "transliteration": "bereshit",
+        "definition": "Beginning",
+        "morphology": {"code": "N-FS", "description": "Noun, Feminine Singular"}
+      }
+    ],
+    "semantic_matches": [
+      {"reference": "Genesis 1:1", "text": "In the beginning God created...", "similarity": 0.94, "translation": "KJV"},
+      {"reference": "Colossians 1:16", "text": "For by him were all things created...", "similarity": 0.90, "translation": "ASV"}
+    ],
+    "versification_mappings": [
+      {"source": "John 1:1", "target": "Yohanan 1:1", "type": "Protestant-Hebrew"},
+      {"source": "Genesis 1:1", "target": "Bereshit 1:1", "type": "Hebrew-Greek"}
+    ],
+    "proper_names": [
+      {"name": "God", "hebrew": "אֱלֹהִים", "greek": "θεός", "description": "Creator", "occurrences": 2600}
+    ],
+    "morphology_codes": [
+      {"code": "N-NSM", "description": "Noun, Nominative Singular Masculine", "language": "Greek"},
+      {"code": "N-FS", "description": "Noun, Feminine Singular", "language": "Hebrew"}
+    ]
+  },
+  "processing_time_seconds": 8.0
+}
 ```
 
-## Testing Results
+### Notes for Cursor
+- Ensure equal treatment of KJV, ASV, YLT, TAHOT (`mcp_rules.md`).
+- Include Hebrew data for OT cross-references (e.g., Genesis 1:1) using `bible.hebrew_ot_words` and `bible.hebrew_entries`.
+- Use `mcp_universal_operations.py` for operations like `quick_vector_search`.
+- Log to `logs/mcp_operations/` (`mcp_operation_logger.py`).
+- Structure JSON for semantic translation and general questions (e.g., “beginning”).
 
-### ✅ LM Studio Connection
-```bash
-curl http://localhost:5002/health
-# Response: "lm_studio_status": "LM Studio connected"
-```
-
-### ✅ Web Interface
-- **Home**: `http://localhost:5002/` ✅
-- **Search**: `http://localhost:5002/search` ✅
-- **LM Studio Test**: `http://localhost:5002/test-lm-studio` ✅
-- **Contextual Insights**: `http://localhost:5002/contextual-insights` ✅
-- **Tutor**: `http://localhost:5002/tutor` ✅
-
-## Next Steps
-
-### 1. Start API Server (Priority: High)
-```bash
-# Need to start the API server for full functionality
-python start_servers.bat  # or individual API components
-```
-
-### 2. Test Full Integration
-- Verify all API endpoints work with LM Studio
-- Test vector search functionality
-- Validate contextual insights API
-
-### 3. Update Setup Notebook
-- Incorporate new web_app.py features
-- Add LM Studio testing steps
-- Include tutor web integration
-
-## Configuration
-
-### Environment Variables (.env)
-```
-API_BASE_URL=http://localhost:5000
-SECRET_KEY=your_secret_key_change_in_production
-ENABLE_CACHE=0
-QWEN_ENABLE_THINKING=false
-QWEN_TEMPERATURE_GENERAL=0.7
-QWEN_TOP_P_GENERAL=0.95
-QWEN_TOP_K_GENERAL=20
-QWEN_MIN_P_GENERAL=0.0
-```
-
-### LM Studio Configuration
-- **URL**: `http://localhost:1234/v1`
-- **Model**: `meta-llama-3.1-8b-instruct` (default)
-- **Features**: Chat completions, model listing, health checks
-
-## Troubleshooting
-
-### LM Studio Issues
-1. Ensure LM Studio is running
-2. Start Local Server in LM Studio
-3. Load a model (e.g., Llama 3.1 8B)
-4. Verify server is on `localhost:1234`
-
-### API Server Issues
-1. Check if port 5000 is available
-2. Verify database connection
-3. Start individual API components
-4. Check logs for errors
-
-### Web Application Issues
-1. Restart web app: `python web_app.py`
-2. Check logs in `logs/web_app.log`
-3. Verify templates are present
-4. Test health endpoint: `/health`
-
-## Standards Compliance
-
-### ✅ MCP Rules (`mcp_rules.md`)
-- **Forward Slashes**: All paths use forward slashes
-- **psycopg3**: Database connections use psycopg3
-- **Protected Directories**: No modifications to BSPclean or system dirs
-
-### ✅ Project Structure
-- **Centralized**: All work in `BibleScholarLangChain/`
-- **Modular**: Separate components for different features
-- **Documented**: Comprehensive logging and error messages
-
-## Summary
-
-The BibleScholarLangChain project now has:
-- ✅ **Working LM Studio integration** with direct API access
-- ✅ **Enhanced web interface** with modern UI and comprehensive features
-- ✅ **Robust error handling** and fallback mechanisms
-- ✅ **Complete template system** for all major features
-- ⚠️ **API server needs to be started** for full functionality
-
-The system is ready for production use with LM Studio as the primary AI backend, with graceful fallback when other services are unavailable. 
+### Next Steps
+Report fix status or errors. If the second agent’s semantic translation needs specs (e.g., LangChain prompt), provide details. I’ll track progress via chat history (June 7, 2025) and files, ensuring comprehensive data and OT cross-references.
