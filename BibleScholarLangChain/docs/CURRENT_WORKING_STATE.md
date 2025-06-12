@@ -1,7 +1,8 @@
 # BibleScholarLangChain - Current Working State
 
-**Last Updated**: 2025-01-27 17:30:00  
-**Status**: FULLY OPERATIONAL ✅
+**Last Updated**: 2025-06-11 19:45:00  
+**Status**: FULLY OPERATIONAL WITH LICENSE PROTECTION ✅  
+**License**: Personal Biblical Use Only - mccoyb00@duck.com
 
 ## 🎯 **SYSTEM OVERVIEW**
 
@@ -9,24 +10,26 @@ The BibleScholarLangChain system is now fully operational with all components wo
 
 ## 🚀 **OPERATIONAL SERVERS**
 
-### **API Server (Port 5000)**
-- **URL**: http://localhost:5000
-- **Health Check**: http://localhost:5000/health
-- **Status**: ✅ OPERATIONAL
+### **Enhanced API Server (Port 5200)**
+- **URL**: http://localhost:5200
+- **Health Check**: http://localhost:5200/health
+- **Status**: ✅ OPERATIONAL WITH LICENSE PROTECTION
 - **Features**:
-  - Comprehensive search API
+  - Enhanced comprehensive search API
   - Contextual insights with LM Studio integration
-  - Vector search capabilities
-  - Database operations
+  - Vector search with TAHOT integration
+  - Licensed database operations
+  - Contact: mccoyb00@duck.com
 
-### **Web UI Server (Port 5002)**
-- **URL**: http://localhost:5002
-- **Health Check**: http://localhost:5002/health
-- **Status**: ✅ OPERATIONAL
+### **Enhanced Web UI Server (Port 5300)**
+- **URL**: http://localhost:5300
+- **Health Check**: http://localhost:5300/health
+- **Status**: ✅ OPERATIONAL WITH LICENSE PROTECTION
 - **Features**:
-  - Search interface: http://localhost:5002/search
-  - Study dashboard: http://localhost:5002/study_dashboard
-  - Tutor interface: http://localhost:5002/tutor
+  - Enhanced search interface with license notice
+  - Study dashboard with modern Bootstrap UI
+  - License-protected functionality
+  - Contact: mccoyb00@duck.com
 
 ### **MCP Server**
 - **Status**: ✅ OPERATIONAL
@@ -41,19 +44,25 @@ The BibleScholarLangChain system is now fully operational with all components wo
 .\start_servers.bat
 ```
 
-### **Startup Sequence**
-1. Kill existing processes on ports 5000 and 5002
+### **Enhanced Startup Sequence**
+1. Kill existing processes on ports 5200 and 5300
 2. Change to BibleScholarLangChain directory
 3. Activate BSPclean virtual environment
-4. Start API server (port 5000) in background
+4. Start Enhanced API server (port 5200) with license protection
 5. Wait 8 seconds and test health endpoint
-6. Start Web UI server (port 5002) in background
+6. Start Enhanced Web UI server (port 5300) with license protection
 7. Wait 8 seconds and test health endpoint
-8. Display final status and access URLs
+8. Display final status, access URLs, and license notice
 
 ## 🛠 **FIXES IMPLEMENTED**
 
-### **Critical Fixes**
+### **Critical Fixes & Recent Updates**
+- ✅ **REFACTORED setup script** - `update_setup_notebook.py` from 2130 to 1015 lines (52% reduction)
+- ✅ **IMPLEMENTED license protection** - Personal Biblical Use License throughout system
+- ✅ **ENHANCED port configuration** - Standardized to 5200 (API) and 5300 (Web UI)
+- ✅ **ADDED modular architecture** - NotebookGenerator, ContentSections, NotebookManager classes
+- ✅ **IMPROVED error handling** - Comprehensive validation and type hints
+- ✅ **CREATED license compliance** - Headers on all source files, contact: mccoyb00@duck.com
 - ✅ **Fixed nested f-string syntax error** in `contextual_insights_api.py` line 792
 - ✅ **Updated root start_servers.bat** to properly handle directory changes
 - ✅ **Added proper virtual environment activation** in batch file
@@ -132,11 +141,13 @@ netstat -an | findstr ":5002"
 - `mcp_universal_operations.py` - MCP server implementation
 
 ### **BibleScholarLangChain Directory**
-- `src/api/api_app.py` - Main API server
-- `web_app.py` - Web UI server
+- `src/api/api_app.py` - Enhanced API server with license protection
+- `web_app.py` - Enhanced Web UI server with license protection
 - `src/api/contextual_insights_api.py` - LM Studio integration (FIXED)
-- `update_setup_notebook.py` - Setup notebook generator
-- `setup.ipynb` - Generated setup notebook
+- `update_setup_notebook.py` - **REFACTORED** modular setup notebook generator (1015 lines)
+- `setup.ipynb` - Enhanced setup notebook (15 cells) with license protection
+- `config/config.json` - Project configuration with license info
+- `.env` - Environment configuration
 
 ### **Documentation**
 - `docs/CURRENT_WORKING_STATE.md` - This document

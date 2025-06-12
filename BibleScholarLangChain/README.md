@@ -2,6 +2,12 @@
 
 This repository contains the full codebase and documentation for the BibleScholarLangChain project.
 
+## 📄 License Notice
+
+**🔒 Personal Biblical Use Only** - This software is licensed for **free personal biblical study, research, and educational use only**. Commercial use requires written permission and payment of licensing fees. See [LICENSE](../LICENSE) for full terms.
+
+**For commercial licensing inquiries, please contact: mccoyb00@duck.com**
+
 ## 📚 Documentation Structure
 - All documentation is now in the `docs/` directory:
   - `docs/features/` — Feature overviews and usage
@@ -17,9 +23,9 @@ To fully rebuild the system from scratch:
 4. Do **not** add large data files (SQL, CSV, etc.) to the repo—see `.gitignore`.
 
 ## Key Scripts
-- `update_setup_notebook.py`: Regenerates the setup notebook.
-- `start_servers.bat`: Starts API and Web UI servers.
-- `scripts/`: Utility and test scripts.
+- `update_setup_notebook.py`: **Refactored modular script** regenerates the enhanced setup notebook with license protection.
+- `start_servers.bat`: Starts Enhanced API (5200) and Web UI (5300) servers.
+- `scripts/`: Utility and test scripts including comprehensive testing framework.
 
 ## Notes
 - All paths use forward slashes for cross-platform compatibility.
