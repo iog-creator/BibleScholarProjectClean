@@ -13,9 +13,9 @@ cd BibleScholarProjectClean
 # Start all servers
 .\start_servers.bat
 
-# Access web interface
-# API: http://localhost:5000
-# Web UI: http://localhost:5002
+# Access enhanced web interface
+# Enhanced API: http://localhost:5200
+# Enhanced Web UI: http://localhost:5300
 ```
 
 ## 📋 System Overview
@@ -23,19 +23,21 @@ cd BibleScholarProjectClean
 The BibleScholar Project is a multi-component system designed for comprehensive Biblical analysis:
 
 - **📚 Database Layer**: PostgreSQL with Hebrew/Greek lexicon data (172,928+ entries)
+- **📖 TAHOT Integration**: The Apostolic Hebrew Old Testament (equal treatment with KJV, ASV, YLT)  
 - **🔍 Vector Search**: Semantic search using pgvector and embeddings
 - **🤖 AI Integration**: LM Studio integration for contextual analysis
-- **🌐 Web Interface**: Flask-based UI for interactive study
-- **🔧 MCP Operations**: 37+ automated operations for system management
-- **📖 API Layer**: RESTful endpoints for all functionality
+- **🌐 Web Interface**: Flask-based UI for interactive study (Enhanced on port 5300)
+- **🔧 MCP Operations**: 42+ automated operations for system management
+- **📖 API Layer**: Enhanced RESTful endpoints (port 5200) for all functionality
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Web UI        │    │   API Server    │    │   Database      │
-│   Port: 5002    │◄──►│   Port: 5000    │◄──►│   PostgreSQL    │
-│   Flask App     │    │   REST API      │    │   + pgvector    │
+│   Enhanced      │    │   Enhanced      │    │   Database      │
+│   Web UI        │    │   API Server    │    │   PostgreSQL    │
+│   Port: 5300    │◄──►│   Port: 5200    │◄──►│   + pgvector    │
+│   TAHOT Support │    │   TAHOT API     │    │   + TAHOT data  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          └───────────────────────┼───────────────────────┘
@@ -103,15 +105,15 @@ The BibleScholar Project is a multi-component system designed for comprehensive 
 
 ## 📖 Usage Guide
 
-### Web Interface
-Navigate to `http://localhost:5002` for the main interface:
-- **Search**: Semantic and keyword search across Biblical texts
-- **Analysis**: AI-powered contextual insights
+### Enhanced Web Interface
+Navigate to `http://localhost:5300` for the enhanced interface:
+- **Multi-Translation Search**: Semantic search across KJV, ASV, YLT, and TAHOT
+- **Enhanced Analysis**: AI-powered contextual insights with cross-references
 - **Lexicon**: Hebrew/Greek word studies with morphology
-- **Cross-References**: Related passages and themes
+- **Cross-References**: Related passages and themes with TAHOT integration
 
-### API Endpoints
-Base URL: `http://localhost:5000`
+### Enhanced API Endpoints
+Base URL: `http://localhost:5200`
 
 ```bash
 # Vector search
@@ -195,19 +197,22 @@ git push origin master
 
 Current system health can be checked via:
 ```bash
-# MCP health check
-check_system_health()
+# Enhanced MCP health check with TAHOT validation
+validate_enhanced_system()
 
-# Direct API check
-curl http://localhost:5000/health
-curl http://localhost:5002/health
+# Quick system status
+system_health_check()
+
+# Direct enhanced API check
+curl http://localhost:5200/health
+curl http://localhost:5300/health
 ```
 
-### Port Usage
-- **5000**: API Server (Flask REST API)
-- **5002**: Web Interface (Flask Web App)
+### Enhanced Port Usage (Standardized)
+- **5200**: Enhanced API Server (Flask REST API with TAHOT integration)
+- **5300**: Enhanced Web Interface (Flask Web App with multi-translation support)
 - **1234**: LM Studio (AI/Embeddings)
-- **5432**: PostgreSQL Database
+- **5432**: PostgreSQL Database (with TAHOT data)
 
 ## 🔍 Troubleshooting
 

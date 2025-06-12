@@ -147,6 +147,155 @@ def quick_contextual_insights(query):
             "error": f"Error calling contextual insights API: {str(e)}"
         }
 
+def validate_enhanced_system():
+    """
+    Comprehensive validation of TAHOT integration and standardized ports
+    Returns detailed status report of the enhanced BibleScholarLangChain system
+    """
+    log_mcp_operation("validate_enhanced_system", {"action": "comprehensive_system_validation"})
+    
+    validation_results = {
+        "timestamp": datetime.now().isoformat(),
+        "tahot_integration": {},
+        "port_configuration": {},
+        "api_functionality": {},
+        "overall_status": "unknown"
+    }
+    
+    try:
+        # 1. Validate TAHOT Integration
+        print("🔍 Validating TAHOT Integration...")
+        
+        # Test TAHOT in contextual insights
+        tahot_test = quick_contextual_insights('John 1:1')
+        translations = tahot_test.get('insights', {}).get('translation_variants', [])
+        tahot_found = any(t.get('translation') == 'TAHOT' for t in translations)
+        
+        validation_results["tahot_integration"] = {
+            "tahot_in_translations": tahot_found,
+            "total_translations": len(translations),
+            "translation_list": [t.get('translation') for t in translations],
+            "status": "✅ PASS" if tahot_found else "❌ FAIL"
+        }
+        
+        # 2. Validate Standardized Ports
+        print("🔌 Validating Standardized Ports...")
+        
+        port_tests = {}
+        
+        # Test API Server (port 5200)
+        try:
+            api_response = requests.get('http://localhost:5200/health', timeout=10)
+            port_tests["api_5200"] = {
+                "accessible": api_response.status_code == 200,
+                "response": api_response.json() if api_response.status_code == 200 else None,
+                "status": "✅ LISTENING" if api_response.status_code == 200 else "❌ NOT RESPONDING"
+            }
+        except Exception as e:
+            port_tests["api_5200"] = {
+                "accessible": False,
+                "error": str(e),
+                "status": "❌ CONNECTION FAILED"
+            }
+        
+        # Test Web UI (port 5300)
+        try:
+            web_response = requests.get('http://localhost:5300/health', timeout=10)
+            port_tests["web_5300"] = {
+                "accessible": web_response.status_code == 200,
+                "response": web_response.json() if web_response.status_code == 200 else None,
+                "status": "✅ LISTENING" if web_response.status_code == 200 else "❌ NOT RESPONDING"
+            }
+        except Exception as e:
+            port_tests["web_5300"] = {
+                "accessible": False,
+                "error": str(e),
+                "status": "❌ CONNECTION FAILED"
+            }
+        
+        validation_results["port_configuration"] = port_tests
+        
+        # 3. Validate API Functionality
+        print("🧪 Validating API Functionality...")
+        
+        api_tests = {}
+        
+        # Test contextual insights endpoint
+        try:
+            insights_response = requests.get(
+                'http://localhost:5200/api/contextual_insights/insights',
+                params={'query': 'John 1:1'},
+                timeout=15
+            )
+            api_tests["contextual_insights"] = {
+                "accessible": insights_response.status_code == 200,
+                "has_data": bool(insights_response.json().get('insights')) if insights_response.status_code == 200 else False,
+                "status": "✅ WORKING" if insights_response.status_code == 200 else "❌ ERROR"
+            }
+        except Exception as e:
+            api_tests["contextual_insights"] = {
+                "accessible": False,
+                "error": str(e),
+                "status": "❌ CONNECTION FAILED"
+            }
+        
+        validation_results["api_functionality"] = api_tests
+        
+        # 4. Overall System Status
+        tahot_ok = validation_results["tahot_integration"]["status"] == "✅ PASS"
+        api_ok = port_tests.get("api_5200", {}).get("accessible", False)
+        web_ok = port_tests.get("web_5300", {}).get("accessible", False)
+        insights_ok = api_tests.get("contextual_insights", {}).get("accessible", False)
+        
+        all_systems_ok = tahot_ok and api_ok and web_ok and insights_ok
+        
+        validation_results["overall_status"] = "✅ FULLY OPERATIONAL" if all_systems_ok else "⚠️ ISSUES DETECTED"
+        
+        # 5. Print Comprehensive Report
+        print("\n" + "="*60)
+        print("🎯 ENHANCED BIBLESCHOLAR SYSTEM VALIDATION REPORT")
+        print("="*60)
+        
+        print(f"\n📊 OVERALL STATUS: {validation_results['overall_status']}")
+        
+        print(f"\n🔤 TAHOT Integration: {validation_results['tahot_integration']['status']}")
+        if tahot_found:
+            print(f"   ✅ TAHOT found in translation variants")
+            print(f"   📋 Available translations: {', '.join(validation_results['tahot_integration']['translation_list'])}")
+        else:
+            print(f"   ❌ TAHOT missing from translation variants")
+        
+        print(f"\n🔌 Port Configuration:")
+        print(f"   API Server (5200): {port_tests.get('api_5200', {}).get('status', 'UNKNOWN')}")
+        print(f"   Web UI (5300): {port_tests.get('web_5300', {}).get('status', 'UNKNOWN')}")
+        
+        print(f"\n🧪 API Functionality:")
+        print(f"   Contextual Insights: {api_tests.get('contextual_insights', {}).get('status', 'UNKNOWN')}")
+        
+        if all_systems_ok:
+            print(f"\n🎉 SUCCESS: Enhanced BibleScholarLangChain system is fully operational!")
+            print(f"   • TAHOT integration: Working")
+            print(f"   • Standardized ports: Active")
+            print(f"   • Enhanced APIs: Functional")
+            print(f"   • Ready for production use")
+        else:
+            print(f"\n⚠️  WARNING: System issues detected. Check individual components above.")
+        
+        print("="*60)
+        
+        return validation_results
+        
+    except Exception as e:
+        validation_results["error"] = str(e)
+        validation_results["overall_status"] = "❌ VALIDATION FAILED"
+        print(f"❌ System validation failed: {e}")
+        return validation_results
+
+# Add alias for easy access
+def system_health_check():
+    """Alias for validate_enhanced_system"""
+    return validate_enhanced_system()
+
 # Directly importable quick functions
 __all__ = [
     'quick_database_check',
