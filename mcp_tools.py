@@ -152,7 +152,7 @@ def validate_enhanced_system():
     Comprehensive validation of TAHOT integration and standardized ports
     Returns detailed status report of the enhanced BibleScholarLangChain system
     """
-    log_mcp_operation("validate_enhanced_system", {"action": "comprehensive_system_validation"})
+    log_mcp_operation("validate_enhanced_system")
     
     validation_results = {
         "timestamp": datetime.now().isoformat(),
