@@ -2,6 +2,13 @@
 """
 Enhanced API server for BibleScholarLangChain with comprehensive data integration
 Registers all API blueprints and serves on port 5200 (standardized)
+
+Copyright (c) 2025 BibleScholarLangChain Project
+
+Licensed under the BibleScholarLangChain Personal Biblical Use License.
+This software is free for personal biblical study, research, and educational use.
+Commercial use requires written permission and payment of licensing fees.
+See LICENSE file for full terms.
 """
 from flask import Flask, jsonify, request
 from flask_caching import Cache

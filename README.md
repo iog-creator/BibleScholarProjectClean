@@ -3,6 +3,12 @@
 > **Comprehensive Bible Study Platform with AI-Powered Analysis**  
 > A sophisticated system combining PostgreSQL database, vector search, AI analysis, and web interfaces for deep Biblical scholarship.
 
+## 📄 License Notice
+
+**🔒 Personal Biblical Use Only** - This software is licensed for **free personal biblical study, research, and educational use only**. Commercial use requires written permission and payment of licensing fees. See [LICENSE](LICENSE) for full terms.
+
+**For commercial licensing inquiries, please contact: [LICENSE_CONTACT_EMAIL]**
+
 ## 🚀 Quick Start
 
 ```bash

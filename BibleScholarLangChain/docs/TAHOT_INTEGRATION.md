@@ -1,5 +1,14 @@
 # TAHOT Integration and Enhanced BibleScholarLangChain System
 
+<!--
+Copyright (c) 2025 BibleScholarLangChain Project
+
+Licensed under the BibleScholarLangChain Personal Biblical Use License.
+This software is free for personal biblical study, research, and educational use.
+Commercial use requires written permission and payment of licensing fees.
+See LICENSE file for full terms.
+-->
+
 ## 🌟 Overview
 
 This document describes the major enhancements made to the BibleScholarLangChain system, including comprehensive TAHOT (The Apostolic Hebrew Old Testament) integration and standardized port configuration.

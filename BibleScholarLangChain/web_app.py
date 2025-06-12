@@ -2,7 +2,14 @@
 """
 Web UI server for BibleScholarLangChain
 Enhanced with LM Studio integration and comprehensive Bible study features
-Serves the user interface on port 5002 and provides direct LM Studio access
+Serves the user interface on port 5300 and provides direct LM Studio access
+
+Copyright (c) 2025 BibleScholarLangChain Project
+
+Licensed under the BibleScholarLangChain Personal Biblical Use License.
+This software is free for personal biblical study, research, and educational use.
+Commercial use requires written permission and payment of licensing fees.
+See LICENSE file for full terms.
 """
 import os
 import sys

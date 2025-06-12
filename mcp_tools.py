@@ -2,6 +2,13 @@
 Helper module to access Bible Scholar MCP functionality directly from Python.
 Re-exports all quick functions and provides convenient aliases.
 Now includes automatic operation logging for AI development tracking.
+
+Copyright (c) 2025 BibleScholarLangChain Project
+
+Licensed under the BibleScholarLangChain Personal Biblical Use License.
+This software is free for personal biblical study, research, and educational use.
+Commercial use requires written permission and payment of licensing fees.
+See LICENSE file for full terms.
 """
 
 from mcp_universal_operations import (
