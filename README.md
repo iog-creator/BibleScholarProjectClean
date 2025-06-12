@@ -274,7 +274,7 @@ monitor_process("servers")
 
 ## 📜 License
 
-This project is for Biblical scholarship and educational purposes.
+This project is for Biblical scholarship and educational purposes. No commercial use permitted without permission from Bryon McCoy. mccoyb00@duck.com
 
 ## 🔗 Links
 
