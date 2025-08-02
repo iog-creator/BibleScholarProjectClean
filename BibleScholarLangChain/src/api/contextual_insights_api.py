@@ -23,7 +23,24 @@ from BibleScholarLangChain.src.utils.bible_reference_parser import normalize_boo
 init(autoreset=True)
 contextual_insights_bp = Blueprint('contextual_insights', __name__)
 
-SYSTEM_PROMPT = "You are a Bible study assistant. You must only answer questions using the data available in the bible_db database. Do not use your own knowledge, outside sources, or make up content. If the answer is not in the database, respond: 'Sorry, I can only answer using the Bible database. No answer found for your query.'"
+SYSTEM_PROMPT = """You are Dr. Sarah Cohen, a distinguished professor of Biblical Studies at Oxford University with 25 years of experience in Hebrew and Greek exegesis, ancient Near Eastern history, biblical theology, and systematic theology.
+
+Your expertise includes:
+- Deep knowledge of original languages (Hebrew, Aramaic, Greek)
+- Understanding of ancient cultural contexts and historical backgrounds
+- Mastery of theological traditions and interpretations
+- Ability to connect biblical themes across testaments
+- Scholarly analysis of biblical texts with academic rigor
+
+You must provide insights that are:
+1. Academically rigorous and well-reasoned
+2. Grounded in the provided biblical data from the bible_db database
+3. Respectful of multiple theological perspectives
+4. Rich in historical and cultural context
+5. Theologically sound and biblically faithful
+6. Practical and applicable to modern Christian life
+
+IMPORTANT: Use ONLY the data provided from the bible_db database. Do not reference external sources or make up content. If the answer is not in the database, respond: 'Sorry, I can only answer using the Bible database. No answer found for your query.'"""
 
 def get_db_connection():
     """Get database connection"""
@@ -670,41 +687,71 @@ class ComprehensiveBibleAnalyzer:
                 versification_mappings, translation_analysis
             )
             
-            # Create comprehensive prompt
-            prompt = f"""As a biblical scholar with access to comprehensive biblical resources, provide detailed insights for this query: "{query}"
+            # Create enhanced comprehensive prompt
+            prompt = f"""{SYSTEM_PROMPT}
+
+ANALYZE THIS BIBLICAL QUERY WITH SCHOLARLY DEPTH: "{query}"
 
 AVAILABLE TRANSLATIONS (USE ONLY THESE):
 - KJV (King James Version)
-- ASV (American Standard Version)
+- ASV (American Standard Version) 
 - YLT (Young's Literal Translation)
 - TAHOT (The Ancient Hebrew Old Testament)
-
-IMPORTANT: Do not reference or quote from any other translations. Use ONLY the translations listed above.
 
 COMPREHENSIVE BIBLICAL DATA AVAILABLE:
 {comprehensive_context}
 
-Please provide a thorough analysis that integrates:
-1. **Multiple Translation Perspective**: Compare insights across our available translations (KJV, ASV, YLT, TAHOT)
-2. **Original Language Analysis**: Use Greek/Hebrew Strong's numbers and lexical data
-3. **Grammatical Context**: Apply morphological analysis for deeper understanding
-4. **Cross-References**: Connect related passages and themes
-5. **Semantic Connections**: Identify conceptually related verses and themes
-6. **Theological Implications**: Explain the theological significance
-7. **Practical Application**: How this applies to Christian life and understanding
+STRUCTURED ANALYSIS REQUIREMENTS:
 
-Query: {query}
+1. **LITERAL MEANING & CONTEXT**
+   - What does the text say in its most basic form?
+   - What is the immediate context and setting?
+   - How do the available translations compare?
 
-Provide a comprehensive, scholarly response that demonstrates the depth of biblical analysis possible with these integrated resources. Remember to use ONLY the translations listed above."""
+2. **ORIGINAL LANGUAGE INSIGHTS**
+   - How do the Hebrew/Greek words enhance understanding?
+   - What are the key lexical and grammatical features?
+   - How do morphological details affect interpretation?
 
-            # Generate response using LM Studio
+3. **HISTORICAL & CULTURAL CONTEXT**
+   - What historical background is relevant?
+   - What cultural factors influence understanding?
+   - How does ancient context inform modern application?
+
+4. **THEOLOGICAL ANALYSIS**
+   - What theological truths are revealed?
+   - How does this connect to broader biblical themes?
+   - What doctrinal implications emerge?
+
+5. **CROSS-REFERENCE CONNECTIONS**
+   - How does this connect to other biblical passages?
+   - What thematic relationships exist?
+   - How does this fit into the biblical narrative?
+
+6. **PRACTICAL APPLICATION**
+   - How does this apply to Christian life today?
+   - What spiritual principles can be drawn?
+   - How should this influence faith and practice?
+
+7. **SCHOLARLY INSIGHTS**
+   - What interpretive challenges exist?
+   - What different perspectives might be considered?
+   - What further study would be beneficial?
+
+Provide a comprehensive, academically rigorous analysis that demonstrates scholarly depth while remaining accessible and practical. Use clear sections, specific biblical references, and maintain theological accuracy throughout."""
+
+            # Generate response using LM Studio with optimized parameters
             response = requests.post(
                 self.chat_url,
                 json={
                     "model": self.chat_model,
                     "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 8128,
-                    "temperature": 0.7
+                    "max_tokens": 8192,
+                    "temperature": 0.3,  # Lower temperature for more consistent, scholarly output
+                    "top_p": 0.9,        # Focus on most relevant tokens
+                    "frequency_penalty": 0.1,  # Reduce repetition
+                    "presence_penalty": 0.1,   # Encourage diverse content
+                    "stop": ["###", "END", "CONCLUSION"]  # Natural stopping points
                 },
                 timeout=self.timeout
             )
@@ -723,35 +770,53 @@ Provide a comprehensive, scholarly response that demonstrates the depth of bibli
         
         if verses_data:
             context_parts.append("## RELEVANT VERSES FROM MULTIPLE TRANSLATIONS:")
-            for verse in verses_data[:10]:  # Limit for readability
-                context_parts.append(f"• {verse['book_name']} {verse['chapter_num']}:{verse['verse_num']} ({verse['translation_source']}): {verse['text']}")
+            # Group verses by translation for better comparison
+            translations = {}
+            for verse in verses_data[:15]:  # Increased limit for better coverage
+                trans = verse.get('translation_source', 'Unknown')
+                if trans not in translations:
+                    translations[trans] = []
+                translations[trans].append(verse)
+            
+            for trans, verses in translations.items():
+                context_parts.append(f"\n### {trans} Translation:")
+                for verse in verses[:5]:  # Limit per translation
+                    context_parts.append(f"• {verse['book_name']} {verse['chapter_num']}:{verse['verse_num']}: {verse['text']}")
         
         if strongs_data:
             context_parts.append("\n## ORIGINAL LANGUAGE ANALYSIS (STRONG'S NUMBERS):")
-            greek_strongs = [s for s in strongs_data if s['language'] == 'Greek'][:5]
-            hebrew_strongs = [s for s in strongs_data if s['language'] == 'Hebrew'][:5]
+            greek_strongs = [s for s in strongs_data if s.get('language') == 'Greek'][:8]  # Increased limit
+            hebrew_strongs = [s for s in strongs_data if s.get('language') == 'Hebrew'][:8]  # Increased limit
             
             if greek_strongs:
-                context_parts.append("### Greek Words:")
+                context_parts.append("### Greek Words (Key Terms):")
                 for word in greek_strongs:
                     try:
                         word_text = word.get('word_text', word.get('gloss', 'N/A'))
                         lemma = word.get('lemma', 'N/A')
                         definition = word.get('definition', 'N/A')
                         strongs_id = word.get('strongs_id', 'N/A')
-                        context_parts.append(f"• {word_text} ({strongs_id}): {lemma} - {definition}")
+                        usage = word.get('usage', 'N/A')
+                        context_parts.append(f"• {word_text} (G{strongs_id}): {lemma}")
+                        context_parts.append(f"  Definition: {definition}")
+                        if usage and usage != 'N/A':
+                            context_parts.append(f"  Usage: {usage}")
                     except Exception as e:
                         print(f"Error processing Greek Strong's word: {e}, word data: {word}")
             
             if hebrew_strongs:
-                context_parts.append("### Hebrew Words:")
+                context_parts.append("### Hebrew Words (Key Terms):")
                 for word in hebrew_strongs:
                     try:
                         word_text = word.get('word_text', word.get('gloss', 'N/A'))
                         lemma = word.get('lemma', 'N/A')
                         definition = word.get('definition', 'N/A')
                         strongs_id = word.get('strongs_id', 'N/A')
-                        context_parts.append(f"• {word_text} ({strongs_id}): {lemma} - {definition}")
+                        usage = word.get('usage', 'N/A')
+                        context_parts.append(f"• {word_text} (H{strongs_id}): {lemma}")
+                        context_parts.append(f"  Definition: {definition}")
+                        if usage and usage != 'N/A':
+                            context_parts.append(f"  Usage: {usage}")
                     except Exception as e:
                         print(f"Error processing Hebrew Strong's word: {e}, word data: {word}")
         
