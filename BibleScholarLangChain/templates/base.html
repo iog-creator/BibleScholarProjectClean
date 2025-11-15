@@ -42,6 +42,20 @@
             padding: 1rem;
             margin: 1rem 0;
         }
+        /* Phase-5 LM status badge styles */
+        .lm-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        .lm-badge-grey { background-color: #9ca3af; color: #ffffff; }
+        .lm-badge-green { background-color: #22c55e; color: #ffffff; }
+        .lm-badge-yellow { background-color: #eab308; color: #111827; }
+        .lm-badge-red { background-color: #ef4444; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -82,6 +96,14 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
+                    {% if lm_status_badge %}
+                    <li class="nav-item">
+                        <div class="lm-status-badge {{ lm_status_badge.color_class }}" title="{{ lm_status_badge.tooltip|e }}">
+                            <span class="lm-status-icon">{{ lm_status_badge.icon }}</span>
+                            <span class="lm-status-label">{{ lm_status_badge.label }}</span>
+                        </div>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="/health">
                             <i class="fas fa-heartbeat"></i> Health Check

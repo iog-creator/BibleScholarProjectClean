@@ -23,6 +23,7 @@ from dotenv import load_dotenv, set_key
 from logging.handlers import RotatingFileHandler
 import datetime
 import shutil
+from BibleScholarLangChain.src.utils import lm_status_helper
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -162,6 +163,15 @@ def proxy_api_request(endpoint, params=None, json_data=None, method='GET', timeo
         return {'error': 'Cannot connect to API server. Make sure it is running on port 5200.'}, 503
     except Exception as e:
         return {'error': f'API request failed: {str(e)}'}, 500
+
+# --- CONTEXT PROCESSORS ---
+
+@app.context_processor
+def inject_lm_status():
+    """Inject LM status badge context into all templates."""
+    return {
+        "lm_status_badge": lm_status_helper.badge_context(),
+    }
 
 # --- ROUTES ---
 
